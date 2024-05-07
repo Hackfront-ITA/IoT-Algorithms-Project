@@ -6,10 +6,13 @@
 #include "i2c.h"
 #include "utils.h"
 
+
 #define N_I2C_PIN_SDA   20
 #define N_I2C_PIN_SCL   21
 #define N_I2C_CLK_FREQ  100000
 #define N_I2C_MASTER_PORT 1
+
+static const char *TAG = "node_i2c";
 
 esp_err_t n_i2c_init(void) {
   i2c_config_t conf = {
@@ -26,11 +29,13 @@ esp_err_t n_i2c_init(void) {
 
   result = i2c_param_config(N_I2C_MASTER_PORT, &conf);
   if (result != ESP_OK) {
+    ESP_LOGE(TAG, "Error applying configuration, rc = %x", N_I2C_MASTER_PORT, result);
     return result;
   }
 
   result = i2c_driver_install(N_I2C_MASTER_PORT, conf.mode, 0, 0, 0);
   if (result != ESP_OK) {
+    ESP_LOGE(TAG, "Error installing driver, rc = %x", result);
     return result;
   }
 
