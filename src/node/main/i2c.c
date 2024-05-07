@@ -1,14 +1,15 @@
 #include <stdint.h>
 
 #include <driver/i2c.h>
+#include <esp_err.h>
 
 #include "i2c.h"
 #include "utils.h"
 
-#define N_I2C_PIN_SDA   xxx
-#define N_I2C_PIN_SCL   xxx
+#define N_I2C_PIN_SDA   20
+#define N_I2C_PIN_SCL   21
 #define N_I2C_CLK_FREQ  100000
-#define N_I2C_MASTER_PORT 0
+#define N_I2C_MASTER_PORT 1
 
 esp_err_t n_i2c_init(void) {
   i2c_config_t conf = {
@@ -42,6 +43,10 @@ uint8_t n_i2c_read_u8(uint8_t addr, uint8_t reg) {
   return value;
 }
 
+void n_i2c_write_u8(uint8_t addr, uint8_t reg, uint8_t value) {
+  ESP_ERROR_CHECK(n_i2c_write(addr, reg, &value, sizeof(uint8_t)));
+}
+
 esp_err_t n_i2c_read(uint8_t addr, uint8_t reg, uint8_t *msg, size_t len) {
   i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 
@@ -51,7 +56,7 @@ esp_err_t n_i2c_read(uint8_t addr, uint8_t reg, uint8_t *msg, size_t len) {
 
   i2c_master_start(cmd);
   i2c_master_write_byte(cmd, addr << 1 | I2C_MASTER_READ, true);
-  i2c_master_read(cmd, msg, len, true);
+  i2c_master_read(cmd, msg, len, I2C_MASTER_LAST_NACK);
   i2c_master_stop(cmd);
 
   esp_err_t result;

@@ -2,26 +2,30 @@
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+
+#include <esp_err.h>
 #include <esp_log.h>
 
-#include "i2c.h"
+#include "adxl345.h"
 #include "utils.h"
 
 #define TAG  "App main"
 
-#define ADXL_ADDRESS    0x1D
-#define ADXL_REG_DEVID  0x00
-
 void app_main(void) {
   ESP_LOGI(TAG, "App start");
 
-  ESP_ERROR_CHECK(n_i2c_init());
-  ESP_LOGI(TAG, "I2C initialized successfully");
-
-  uint8_t devid = n_i2c_read_u8(ADXL_ADDRESS, ADXL_REG_DEVID);
-  printf("devid = %x\n", devid);
+  ESP_ERROR_CHECK(adxl345_init());
+  ESP_LOGI(TAG, "ADXL345 initialized successfully");
 
   while (1) {
+    adxl345_data_t value;
+
+    adxl345_read_data(&value);
+
+    printf("value_x = %hd\n", value.x);
+    printf("value_y = %hd\n", value.y);
+    printf("value_z = %hd\n", value.z);
+
     vTaskDelay(C_DELAY_MS(1000));
   }
 

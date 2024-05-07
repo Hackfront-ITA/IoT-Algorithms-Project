@@ -24,6 +24,7 @@
 #define ADXL345_REG_INT_MAP         0x2F  // Interrupt mapping control
 #define ADXL345_REG_INT_SOURCE      0x30  // Source of interrupts
 #define ADXL345_REG_DATA_FORMAT     0x31  // Data format control
+#define ADXL345_REG_DATA            0x32  // Data
 #define ADXL345_REG_DATAX0          0x32  // X-axis data 0
 #define ADXL345_REG_DATAX1          0x33  // X-axis data 1
 #define ADXL345_REG_DATAY0          0x34  // Y-axis data 0
@@ -32,5 +33,14 @@
 #define ADXL345_REG_DATAZ1          0x37  // Z-axis data 1
 #define ADXL345_REG_FIFO_CTL        0x38  // FIFO control
 #define ADXL345_REG_FIFO_STATUS     0x39  // FIFO status
+
+typedef struct {
+  int16_t x;
+  int16_t y;
+  int16_t z;
+} adxl345_data_t;
+
+esp_err_t adxl345_init(void);
+void adxl345_read_data(adxl345_data_t *value);
 
 #endif /* end of include guard: N_ADXL_345_H */
