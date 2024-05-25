@@ -24,18 +24,24 @@ static esp_mqtt_client_config_t n_mqtt_cfg = {
 
 static esp_mqtt_client_handle_t n_client;
 
-static void n_mqtt_on_connect(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
-static void n_mqtt_on_disconnect(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
-static void n_mqtt_on_error(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
+static void n_mqtt_on_connect(void *handler_args,
+		esp_event_base_t base, int32_t event_id, void *event_data);
+static void n_mqtt_on_disconnect(void *handler_args,
+		esp_event_base_t base, int32_t event_id, void *event_data);
+static void n_mqtt_on_error(void *handler_args,
+		esp_event_base_t base, int32_t event_id, void *event_data);
 
 esp_err_t n_mqtt_start(void) {
 	n_client = esp_mqtt_client_init(&n_mqtt_cfg);
 	if (n_client == NULL) {
 		return ESP_FAIL;
 	}
-	esp_mqtt_client_register_event(n_client, MQTT_EVENT_CONNECTED,    n_mqtt_on_connect,     NULL);
-	esp_mqtt_client_register_event(n_client, MQTT_EVENT_DISCONNECTED, n_mqtt_on_disconnect,  NULL);
-	esp_mqtt_client_register_event(n_client, MQTT_EVENT_ERROR,        n_mqtt_on_error,       NULL);
+	esp_mqtt_client_register_event(n_client,
+		MQTT_EVENT_CONNECTED,    n_mqtt_on_connect,     NULL);
+	esp_mqtt_client_register_event(n_client,
+		MQTT_EVENT_DISCONNECTED, n_mqtt_on_disconnect,  NULL);
+	esp_mqtt_client_register_event(n_client,
+		MQTT_EVENT_ERROR,        n_mqtt_on_error,       NULL);
 	esp_mqtt_client_start(n_client);
 
 	return ESP_OK;
@@ -59,22 +65,29 @@ esp_err_t n_mqtt_publish(const char *topic, const char *data) {
 }
 
 
-static void n_mqtt_on_connect(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
+static void n_mqtt_on_connect(void *handler_args,
+		esp_event_base_t base, int32_t event_id, void *event_data)
+{
 	ESP_LOGI(TAG, "Connected");
 
 	n_mqtt_connected = true;
 
-	int msg_id = esp_mqtt_client_publish(n_client, MQTT_BASE_TOPIC "/status", "ALIVE", 0, 0, true);
+	int msg_id = esp_mqtt_client_publish(n_client,
+		MQTT_BASE_TOPIC "/status", "ALIVE", 0, 0, true);
 	ESP_LOGI(TAG, "Sent alive message, msg_id=%d", msg_id);
 };
 
-static void n_mqtt_on_disconnect(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
+static void n_mqtt_on_disconnect(void *handler_args,
+		esp_event_base_t base, int32_t event_id, void *event_data)
+{
 	ESP_LOGI(TAG, "Disconnected");
 
 	n_mqtt_connected = false;
 };
 
-static void n_mqtt_on_error(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
+static void n_mqtt_on_error(void *handler_args,
+		esp_event_base_t base, int32_t event_id, void *event_data)
+{
 	ESP_LOGI(TAG, "Generic error");
 
 	// if (event->error_handle->error_type == MQTT_ERROR_TYPE_TCP_TRANSPORT) {

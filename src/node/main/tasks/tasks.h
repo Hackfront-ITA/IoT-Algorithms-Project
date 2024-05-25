@@ -6,9 +6,14 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
+#include "adxl345.h"
+
 typedef struct {
+	float *accel_data_x;
+	float *accel_data_y;
+	float *accel_data_z;
+
 	size_t num_samples;
-	float *adc_data;
 	float sampling_freq;
 } task_args_t;
 

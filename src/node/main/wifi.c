@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include <esp_err.h>
 #include <esp_log.h>
 #include <esp_netif.h>
 #include <esp_wifi.h>
@@ -23,7 +24,7 @@
 // #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WAPI_PSK
 
 #define NET_WIFI_CONN_MAX_RETRY  5
-#define NET_WIFI_IF_NAME  "netif_wifi"
+#define NET_WIFI_IF_NAME  "wlan0"
 
 wifi_config_t wifi_config = {
 	.sta = {
@@ -68,9 +69,12 @@ esp_err_t n_network_connect(void) {
 	ESP_ERROR_CHECK(esp_wifi_start());
 
 	conn_retry_num = 0;
-	ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_CONNECTED, &wifi_handle_connect, wifi_interface));
-	ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, &wifi_handle_disconnect, NULL));
-	ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_handle_got_ip, NULL));
+	ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT,
+		WIFI_EVENT_STA_CONNECTED,    &wifi_handle_connect,    wifi_interface));
+	ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT,
+		WIFI_EVENT_STA_DISCONNECTED, &wifi_handle_disconnect, NULL));
+	ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT,
+		IP_EVENT_STA_GOT_IP,         &wifi_handle_got_ip,     NULL));
 
 	ESP_LOGI(TAG, "Connecting to %s...", wifi_config.sta.ssid);
 	ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
@@ -93,9 +97,12 @@ esp_err_t n_network_disconnect(void) {
 }
 
 static void wifi_shutdown(void) {
-	ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT, WIFI_EVENT_STA_CONNECTED, &wifi_handle_connect));
-	ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, &wifi_handle_disconnect));
-	ESP_ERROR_CHECK(esp_event_handler_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_handle_got_ip));
+	ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT,
+		WIFI_EVENT_STA_CONNECTED,    &wifi_handle_connect));
+	ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT,
+		WIFI_EVENT_STA_DISCONNECTED, &wifi_handle_disconnect));
+	ESP_ERROR_CHECK(esp_event_handler_unregister(IP_EVENT,
+		IP_EVENT_STA_GOT_IP,         &wifi_handle_got_ip));
 
 	esp_wifi_disconnect();
 
@@ -139,9 +146,14 @@ static void wifi_handle_got_ip(void *arg,
 {
 	conn_retry_num = 0;
 	ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
-	if (strncmp(NET_WIFI_IF_NAME, esp_netif_get_desc(event->esp_netif), strlen(NET_WIFI_IF_NAME) - 1) != 0) {
+
+	if (strncmp(NET_WIFI_IF_NAME, esp_netif_get_desc(event->esp_netif),
+			strlen(NET_WIFI_IF_NAME) - 1) != 0)
+	{
 		return;
 	}
-	ESP_LOGI(TAG, "Got IPv4 event: Interface \"%s\" address: " IPSTR, esp_netif_get_desc(event->esp_netif), IP2STR(&event->ip_info.ip));
+
+	ESP_LOGI(TAG, "Got IPv4 event: Interface \"%s\" address: " IPSTR,
+		esp_netif_get_desc(event->esp_netif), IP2STR(&event->ip_info.ip));
 	ESP_LOGI(TAG, "- IPv4 address: " IPSTR ",", IP2STR(&event->ip_info.ip));
 }

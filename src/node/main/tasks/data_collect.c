@@ -6,30 +6,36 @@
 
 #include "tasks/tasks.h"
 #include "adxl345.h"
-#include "utils.h"
 
 static const char *TAG = "Task data collect";
 
 void task_data_collect(task_args_t *task_args) {
 	uint8_t active_slot = 0;
 
+	float *accel_data_x = task_args->accel_data_x;
+	float *accel_data_y = task_args->accel_data_y;
+	float *accel_data_z = task_args->accel_data_z;
+
+	size_t num_samples = task_args->num_samples;
+	float sampling_freq = task_args->sampling_freq;
+
+	uint16_t sampling_ticks = 1000 / (sampling_freq * portTICK_PERIOD_MS);
+
 	while (1) {
-		size_t num_samples = task_args->num_samples;
-		adxl345_data_t *accel_data = task_args->accel_data;
-		float sampling_freq = task_args->sampling_freq;
+		float *cur_data_x = &accel_data_x[active_slot * num_samples];
+		float *cur_data_y = &accel_data_y[active_slot * num_samples];
+		float *cur_data_z = &accel_data_z[active_slot * num_samples];
 
-		adxl345_data_t *cur_data = &accel_data[active_slot * num_samples];
+		adxl345_data_t value;
 
-		while (1) {
-			adxl345_data_t value;
-
+		for (size_t i = 0; i < num_samples; i++) {
 			adxl345_read_data(&value);
 
-			printf("value_x = %hd\n", value.x);
-			printf("value_y = %hd\n", value.y);
-			printf("value_z = %hd\n", value.z);
+			cur_data_x[i] = value.x;
+			cur_data_y[i] = value.y;
+			cur_data_z[i] = value.z;
 
-			vTaskDelay(C_DELAY_MS(1000));
+			vTaskDelay(sampling_ticks);
 		}
 
 		active_slot = (active_slot + 1) % 2;
