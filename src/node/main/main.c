@@ -19,8 +19,8 @@
 
 #define N_TASK_STACK_SIZE  1024
 
-#define N_NUM_AXIS         3
-#define N_NUM_SLOTS        2
+#define N_NUM_AXIS   3
+#define N_NUM_SLOTS  2
 
 TaskHandle_t th_data_collect = NULL;
 TaskHandle_t th_data_process = NULL;

@@ -13,16 +13,6 @@
 #define NET_WIFI_CONNECT_AP_SORT_METHOD WIFI_CONNECT_AP_BY_SIGNAL
 // #define NET_WIFI_CONNECT_AP_SORT_METHOD WIFI_CONNECT_AP_BY_SECURITY
 
-// #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_OPEN
-// #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WEP
-// #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA_PSK
-// #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA2_PSK
-#define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA_WPA2_PSK
-// #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA2_ENTERPRISE
-// #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA3_PSK
-// #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WPA2_WPA3_PSK
-// #define NET_WIFI_SCAN_AUTH_MODE_THRESHOLD WIFI_AUTH_WAPI_PSK
-
 #define NET_WIFI_CONN_MAX_RETRY  5
 #define NET_WIFI_IF_NAME  "wlan0"
 
@@ -33,11 +23,12 @@ wifi_config_t wifi_config = {
 		.scan_method = NET_WIFI_SCAN_METHOD,
 		.sort_method = NET_WIFI_CONNECT_AP_SORT_METHOD,
 		.threshold.rssi = -127,
-		.threshold.authmode = NET_WIFI_SCAN_AUTH_MODE_THRESHOLD,
+		.threshold.authmode = NET_WIFI_SECURITY,
 	},
 };
 
-static const char *TAG = "hfex_connect";
+static const char *TAG = "WiFi";
+
 static esp_netif_t *wifi_interface = NULL;
 static int conn_retry_num = 0;
 
@@ -61,6 +52,7 @@ esp_err_t n_network_connect(void) {
 	esp_netif_inherent_config_t esp_netif_config = ESP_NETIF_INHERENT_DEFAULT_WIFI_STA();
 	esp_netif_config.if_desc = NET_WIFI_IF_NAME;
 	esp_netif_config.route_prio = 128;
+
 	wifi_interface = esp_netif_create_wifi(WIFI_IF_STA, &esp_netif_config);
 	esp_wifi_set_default_wifi_sta_handlers();
 
@@ -139,17 +131,16 @@ static void wifi_handle_disconnect(void *arg,
 static void wifi_handle_connect(void *esp_netif,
 		esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
+	return;
 }
 
 static void wifi_handle_got_ip(void *arg,
 		esp_event_base_t event_base, int32_t event_id, void *event_data)
 {
 	conn_retry_num = 0;
-	ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
+	ip_event_got_ip_t *event = (ip_event_got_ip_t *)(event_data);
 
-	if (strncmp(NET_WIFI_IF_NAME, esp_netif_get_desc(event->esp_netif),
-			strlen(NET_WIFI_IF_NAME) - 1) != 0)
-	{
+	if (strcmp(NET_WIFI_IF_NAME, esp_netif_get_desc(event->esp_netif)) != 0) {
 		return;
 	}
 
