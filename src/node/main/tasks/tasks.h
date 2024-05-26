@@ -13,6 +13,8 @@ typedef struct {
 	float *accel_data_y;
 	float *accel_data_z;
 
+	float *fft_data;
+
 	size_t num_samples;
 	float sampling_freq;
 } task_args_t;

@@ -72,9 +72,8 @@ static void n_mqtt_on_connect(void *handler_args,
 
 	n_mqtt_connected = true;
 
-	int msg_id = esp_mqtt_client_publish(n_client,
-		MQTT_BASE_TOPIC "/status", "ALIVE", 0, 0, true);
-	ESP_LOGI(TAG, "Sent alive message, msg_id=%d", msg_id);
+	n_mqtt_publish(MQTT_BASE_TOPIC "/status", "BOOTED");
+	ESP_LOGI(TAG, "Sent alive message");
 };
 
 static void n_mqtt_on_disconnect(void *handler_args,
