@@ -4,3 +4,6 @@
 config.h
 
 *.old
+
+/.cache/
+/.vscode/
