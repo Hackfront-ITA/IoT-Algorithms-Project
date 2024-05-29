@@ -129,8 +129,7 @@ esp_err_t n_fft_execute(float *input, float *output) {
 	return ESP_OK;
 }
 
-esp_err_t n_fft_get_outliers(float* input, float* output) {
-
+void n_fft_get_outliers(float* input, float* output) {
 	unsigned int samples_num = fft_size/2;
 
 	unsigned int mean = 0;
@@ -150,7 +149,6 @@ esp_err_t n_fft_get_outliers(float* input, float* output) {
 	for (size_t i = 0; i < samples_num; i++) {
 		output[i] = (input[i] - mean) / std_dev;
 	}
-
 }
 
 esp_err_t n_fft_destroy(void) {
