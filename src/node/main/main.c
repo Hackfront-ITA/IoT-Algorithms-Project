@@ -17,7 +17,7 @@
 #include "network.h"
 #include "utils.h"
 
-#define N_TASK_STACK_SIZE  1024
+#define N_TASK_STACK_SIZE  4096
 
 #define N_NUM_AXIS   3
 #define N_NUM_SLOTS  2
@@ -28,7 +28,7 @@ TaskHandle_t th_data_process = NULL;
 static float accel_data[N_NUM_AXIS * N_NUM_SLOTS * DATA_NUM_SAMPLES];
 static float fft_data[DATA_NUM_SAMPLES];
 
-static const char *TAG = "App main";
+static const char *TAG = "Main";
 
 static task_args_t task_args;
 
@@ -69,19 +69,19 @@ void app_main(void) {
 	task_args.num_samples = DATA_NUM_SAMPLES;
 	task_args.sampling_freq = DATA_SAMPLING_FREQ;
 
-	ESP_LOGI(TAG, "Create data collecting task\n");
+	ESP_LOGI(TAG, "Create data collecting task");
 	xTaskCreate((TaskFunction_t)(task_data_collect), "Data collecting task",
 		N_TASK_STACK_SIZE, &task_args, 10, &th_data_collect);
 
-	ESP_LOGI(TAG, "Create data processing task\n");
+	ESP_LOGI(TAG, "Create data processing task");
 	xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
 		N_TASK_STACK_SIZE, &task_args, 10, &th_data_process);
 
-	ESP_LOGI(TAG, "Connect to network");
-	ESP_ERROR_CHECK(n_network_connect());
-
-	ESP_LOGI(TAG, "Connect to MQTT server");
-	ESP_ERROR_CHECK(n_mqtt_start());
+	// ESP_LOGI(TAG, "Connect to network");
+	// ESP_ERROR_CHECK(n_network_connect());
+	//
+	// ESP_LOGI(TAG, "Connect to MQTT server");
+	// ESP_ERROR_CHECK(n_mqtt_start());
 
 	return;
 }

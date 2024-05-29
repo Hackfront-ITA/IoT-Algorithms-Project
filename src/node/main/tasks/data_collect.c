@@ -26,7 +26,7 @@ void task_data_collect(task_args_t *task_args) {
 		float *cur_data_y = &accel_data_y[active_slot * num_samples];
 		float *cur_data_z = &accel_data_z[active_slot * num_samples];
 
-		adxl345_data_t value;
+		adxl345_norm_data_t value;
 
 		for (size_t i = 0; i < num_samples; i++) {
 			adxl345_read_data(&value);

@@ -20,7 +20,7 @@ static size_t fft_size = 0;
 static fc32_t *buffer = NULL;
 static float *window = NULL;
 #else
-static fc32_t buffer[FFT_STATIC_SIZE * 2];
+static fc32_t buffer[FFT_STATIC_SIZE];
 static float window[FFT_STATIC_SIZE];
 #endif
 
@@ -84,7 +84,7 @@ esp_err_t n_fft_execute(float *input, float *output) {
 	 *    x0, 0, x1, 0, x2, 0 ...
 	 *  buffer after 3 FFT functions: 4096
 	 *    Re(f0), Im(f0), Re(f1), Im(f1), ..., Re(g0), Im(g0), Re(g1), Im(g1), ...
-	 *  output: 2048
+	 *  output: 1024
 	 *    abs(f0), abs(f1), ..., abs(fn)
 	 */
 	esp_err_t result;

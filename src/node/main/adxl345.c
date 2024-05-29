@@ -8,6 +8,9 @@
 #define ADXL345_ADDRESS    0x53
 #define ADXL345_DEVID      0xE5
 
+#define ADXL345_MAX_VALUE_G      1000.0
+#define ADXL345_MAX_VALUE_RAW    0x8000
+
 static const char *TAG = "node_adxl345";
 
 esp_err_t adxl345_init(void) {
@@ -24,16 +27,22 @@ esp_err_t adxl345_init(void) {
 	return ESP_OK;
 }
 
-esp_err_t adxl345_read_data(adxl345_data_t *value) {
+esp_err_t adxl345_read_data(adxl345_norm_data_t *value) {
 	esp_err_t result;
 
+	adxl345_raw_data_t raw_data;
+
 	result = n_i2c_read(ADXL345_ADDRESS, ADXL345_REG_DATA,
-		(uint8_t *)(value), sizeof(adxl345_data_t));
+		(uint8_t *)(&raw_data), sizeof(adxl345_raw_data_t));
 
 	if (result != ESP_OK) {
 		ESP_LOGE(TAG, "Error reading from ADXL345, rc = %x", result);
 		return result;
 	}
+
+	value->x = raw_data.x * ADXL345_MAX_VALUE_G / ADXL345_MAX_VALUE_RAW;
+	value->y = raw_data.y * ADXL345_MAX_VALUE_G / ADXL345_MAX_VALUE_RAW;
+	value->z = raw_data.z * ADXL345_MAX_VALUE_G / ADXL345_MAX_VALUE_RAW;
 
 	return ESP_OK;
 }

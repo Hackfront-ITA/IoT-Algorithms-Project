@@ -38,9 +38,15 @@ typedef struct {
 	int16_t x;
 	int16_t y;
 	int16_t z;
-} adxl345_data_t;
+} adxl345_raw_data_t;
+
+typedef struct {
+	float x;
+	float y;
+	float z;
+} adxl345_norm_data_t;
 
 esp_err_t adxl345_init(void);
-esp_err_t adxl345_read_data(adxl345_data_t *value);
+esp_err_t adxl345_read_data(adxl345_norm_data_t *value);
 
 #endif /* end of include guard: N_ADXL_345_H */

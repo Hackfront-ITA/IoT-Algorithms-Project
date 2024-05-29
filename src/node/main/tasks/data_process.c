@@ -40,11 +40,26 @@ void task_data_process(task_args_t *task_args) {
 		float *cur_data_y = &accel_data_y[active_slot * num_samples];
 		float *cur_data_z = &accel_data_z[active_slot * num_samples];
 
+		ESP_LOGI(TAG, "Processing axis data X");
+		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
+			dsps_view(cur_data_x, DATA_NUM_SAMPLES, 128, 10, -15, +15, '#');
+		}
+
 		ESP_ERROR_CHECK(n_fft_execute(cur_data_x, fft_data));
 		process_axis_data(fft_data, 'x', sampling_freq);
 
+		ESP_LOGI(TAG, "Processing axis data Y");
+		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
+			dsps_view(cur_data_y, DATA_NUM_SAMPLES, 128, 10, -15, +15, '#');
+		}
+
 		ESP_ERROR_CHECK(n_fft_execute(cur_data_y, fft_data));
 		process_axis_data(fft_data, 'y', sampling_freq);
+
+		ESP_LOGI(TAG, "Processing axis data Z");
+		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
+			dsps_view(cur_data_z, DATA_NUM_SAMPLES, 128, 10, -15, +15, '#');
+		}
 
 		ESP_ERROR_CHECK(n_fft_execute(cur_data_z, fft_data));
 		process_axis_data(fft_data, 'z', sampling_freq);
@@ -54,12 +69,16 @@ void task_data_process(task_args_t *task_args) {
 }
 
 static void process_axis_data(float *fft_data, char axis, float sampling_freq) {
-	if (n_mqtt_connected) {
-		ESP_LOGI(TAG, "Sending results");
-
-		char buffer[16];
-		snprintf(buffer, sizeof(buffer), "%.05f", 1.23456789);
-
-		ESP_ERROR_CHECK(n_mqtt_publish(MQTT_BASE_TOPIC "/average", buffer));
+	if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
+		dsps_view(fft_data, DATA_NUM_SAMPLES / 2, 128, 10, 0, +100, '*');
 	}
+
+	// if (n_mqtt_connected) {
+	// 	ESP_LOGI(TAG, "Sending results");
+	//
+	// 	char buffer[16];
+	// 	snprintf(buffer, sizeof(buffer), "%.05f", 1.23456789);
+	//
+	// 	ESP_ERROR_CHECK(n_mqtt_publish(MQTT_BASE_TOPIC "/average", buffer));
+	// }
 }
