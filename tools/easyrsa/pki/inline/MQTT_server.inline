@@ -1,0 +1,147 @@
+# Easy-RSA Type: server
+# Name: MQTT_server
+
+<cert>
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            63:a3:34:48:89:58:fb:f0:57:23:92:3b:b8:a4:2f:b6
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=IoT Project CA
+        Validity
+            Not Before: Jun  4 09:35:20 2024 GMT
+            Not After : Aug  3 09:35:20 2024 GMT
+        Subject: CN=MQTT_server
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:a5:ec:96:d8:3e:a5:d2:cf:f2:3d:98:f2:a7:6a:
+                    73:f2:f3:1b:ca:e9:6c:52:3a:89:30:ef:f0:3e:1e:
+                    8b:af:a6:77:aa:c6:9f:7f:17:17:0f:14:d9:ae:ff:
+                    fa:e3:e8:57:d6:22:4f:f2:ed:cd:0e:89:9b:18:c6:
+                    3b:d7:03:97:8f:7b:21:e8:b8:ca:2a:0a:88:31:b6:
+                    6d:89:b7:53:d7:d5:a7:e9:b9:47:ae:4e:06:d8:0f:
+                    e4:7a:25:02:51:4f:3e:7b:b7:61:2e:53:00:85:7c:
+                    3e:63:3f:05:82:e0:fa:a9:56:3e:ee:c9:ff:97:01:
+                    08:8d:28:75:9b:52:98:67:dc:5a:eb:3c:44:c4:aa:
+                    f2:90:10:3d:d4:3a:c3:74:b1:7d:56:92:5e:29:9e:
+                    39:dc:ed:38:38:68:26:e5:ee:a6:5a:36:3a:e0:93:
+                    f9:66:37:f4:54:38:3d:e3:2f:aa:04:97:82:d7:1e:
+                    f3:0a:f7:eb:e1:8c:e4:7d:42:f5:76:5c:99:6a:cc:
+                    f6:5f:fd:9b:ed:08:92:43:b6:f2:01:0e:b4:41:1d:
+                    1d:01:db:bf:7d:61:2f:1b:13:7b:21:95:fc:4d:15:
+                    4c:ba:32:f9:81:3b:1b:14:b7:fb:c8:f9:f6:95:25:
+                    b5:2f:66:54:2d:28:b9:67:8d:c1:76:f9:d1:45:b7:
+                    19:67
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                95:F5:91:B9:86:5D:A3:D3:7C:BD:A0:10:2E:0F:D8:D8:1B:FE:B3:DC
+            X509v3 Authority Key Identifier: 
+                keyid:4A:3F:3B:FE:F6:CA:31:66:A5:66:17:C2:E2:B8:A8:DD:4D:B5:31:B4
+                DirName:/CN=IoT Project CA
+                serial:2C:EF:AE:EE:12:E6:A7:57:52:B3:73:AE:04:22:76:68:B2:86:26:B8
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment
+            X509v3 Subject Alternative Name: 
+                DNS:MQTT_server
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        0b:79:bd:48:f9:ac:33:80:7d:bd:af:f7:2e:85:93:32:08:cc:
+        f8:99:eb:00:be:17:69:b9:74:d0:af:76:05:c5:3f:8b:29:2c:
+        8a:a0:93:8f:0b:78:5d:0b:62:97:37:a9:b8:d5:88:a9:20:b8:
+        d7:3a:12:ff:87:15:7d:76:d5:c7:bd:cf:13:c3:a5:53:e0:43:
+        6f:88:d3:20:5f:97:91:51:75:fd:30:42:35:b0:7f:2d:d7:2f:
+        65:dc:ce:e8:ba:50:f7:93:03:50:16:7c:70:3d:14:63:59:bc:
+        e5:10:ff:09:44:88:3c:15:ce:82:6e:a2:92:45:ff:26:95:61:
+        44:e5:ab:94:bd:c4:f6:6e:42:2d:ff:d3:02:d2:78:d7:24:f9:
+        21:e0:40:be:f5:6b:b5:0e:ab:a0:01:70:97:b2:6f:e7:91:5f:
+        65:af:c3:fc:61:95:e9:d8:f8:d9:0f:08:1a:d2:18:4a:cc:d6:
+        98:75:d7:61:74:0c:43:15:0c:fa:7f:95:6b:f8:e6:67:58:21:
+        62:1e:f4:84:66:c9:5e:1a:61:a7:ec:5d:f8:4b:98:a4:d6:19:
+        ac:8d:9a:c7:a7:83:41:4d:88:5b:42:58:2f:d1:d8:e1:09:eb:
+        2a:de:53:bb:9f:04:4a:75:eb:19:4d:21:f6:66:9e:22:dc:67:
+        90:21:1d:44
+-----BEGIN CERTIFICATE-----
+MIIDdzCCAl+gAwIBAgIQY6M0SIlY+/BXI5I7uKQvtjANBgkqhkiG9w0BAQsFADAZ
+MRcwFQYDVQQDDA5Jb1QgUHJvamVjdCBDQTAeFw0yNDA2MDQwOTM1MjBaFw0yNDA4
+MDMwOTM1MjBaMBYxFDASBgNVBAMMC01RVFRfc2VydmVyMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEApeyW2D6l0s/yPZjyp2pz8vMbyulsUjqJMO/wPh6L
+r6Z3qsaffxcXDxTZrv/64+hX1iJP8u3NDombGMY71wOXj3sh6LjKKgqIMbZtibdT
+19Wn6blHrk4G2A/keiUCUU8+e7dhLlMAhXw+Yz8FguD6qVY+7sn/lwEIjSh1m1KY
+Z9xa6zxExKrykBA91DrDdLF9VpJeKZ453O04OGgm5e6mWjY64JP5Zjf0VDg94y+q
+BJeC1x7zCvfr4YzkfUL1dlyZasz2X/2b7QiSQ7byAQ60QR0dAdu/fWEvGxN7IZX8
+TRVMujL5gTsbFLf7yPn2lSW1L2ZULSi5Z43BdvnRRbcZZwIDAQABo4G9MIG6MAkG
+A1UdEwQCMAAwHQYDVR0OBBYEFJX1kbmGXaPTfL2gEC4P2Ngb/rPcMFQGA1UdIwRN
+MEuAFEo/O/72yjFmpWYXwuK4qN1NtTG0oR2kGzAZMRcwFQYDVQQDDA5Jb1QgUHJv
+amVjdCBDQYIULO+u7hLmp1dSs3OuBCJ2aLKGJrgwEwYDVR0lBAwwCgYIKwYBBQUH
+AwEwCwYDVR0PBAQDAgWgMBYGA1UdEQQPMA2CC01RVFRfc2VydmVyMA0GCSqGSIb3
+DQEBCwUAA4IBAQALeb1I+awzgH29r/cuhZMyCMz4mesAvhdpuXTQr3YFxT+LKSyK
+oJOPC3hdC2KXN6m41YipILjXOhL/hxV9dtXHvc8Tw6VT4ENviNMgX5eRUXX9MEI1
+sH8t1y9l3M7oulD3kwNQFnxwPRRjWbzlEP8JRIg8Fc6CbqKSRf8mlWFE5auUvcT2
+bkIt/9MC0njXJPkh4EC+9Wu1DqugAXCXsm/nkV9lr8P8YZXp2PjZDwga0hhKzNaY
+dddhdAxDFQz6f5Vr+OZnWCFiHvSEZsleGmGn7F34S5ik1hmsjZrHp4NBTYhbQlgv
+0djhCesq3lO7nwRKdesZTSH2Zp4i3GeQIR1E
+-----END CERTIFICATE-----
+</cert>
+
+<key>
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCl7JbYPqXSz/I9
+mPKnanPy8xvK6WxSOokw7/A+Houvpneqxp9/FxcPFNmu//rj6FfWIk/y7c0OiZsY
+xjvXA5ePeyHouMoqCogxtm2Jt1PX1afpuUeuTgbYD+R6JQJRTz57t2EuUwCFfD5j
+PwWC4PqpVj7uyf+XAQiNKHWbUphn3FrrPETEqvKQED3UOsN0sX1Wkl4pnjnc7Tg4
+aCbl7qZaNjrgk/lmN/RUOD3jL6oEl4LXHvMK9+vhjOR9QvV2XJlqzPZf/ZvtCJJD
+tvIBDrRBHR0B2799YS8bE3shlfxNFUy6MvmBOxsUt/vI+faVJbUvZlQtKLlnjcF2
++dFFtxlnAgMBAAECggEAAUylTxtGHGnFb/oOLrY4hLbXcMhpel+RRG5Fv9nWVym2
+3N2D0UwGbGUM7joCx+94QWPPZpHSkDwzc5mM38CTKdm7AomPLIJBLXWJItT2VC1W
+KwQHZIlkp/Jq9mdALLqlqoa+7eVGy6xwjruOwhAb1zA5PoSJUCpISZ+p3yqShOGA
+Z5TScHPwavylerp+dfUXsUOjoLKOOb8y9PJUUhciYnJIqPrMSa4LFDBhZQLoYlmW
+gfsg2Up5RCNyp26o0060OhpeC0SkuczRlioUSd7QEWB2np1StE9kdOQsFApahZG7
+y/gTYF95c4R4BhezKRgDw6fWvIVH1aLKMZY/bu1/IQKBgQDpBRmyklnN1tciJRtg
++t41SH3DgtTCS3Ydw/AbQ5jeOTngHVNWq23Dl0+HWaI5AtCgDm/RYx9j8UDUKNTb
+IZfd3RJyg8JphNXnbfHrKSsb1SZFAr7tQicdOHUiYra0gsIjyb1eXQGlNllBn0RI
+uCvXKG07DrKrxZqNnWtOCSqBeQKBgQC2SZEmiKIhmfT9+SW6IipXXQiFS/Zrrw/0
+C+Nj7M73LVYDV6QMF9PuKepw3fWKIHp/txldTULB68K2xeFEV2DfomGoDN15ZQE8
+g9lewEzZE0tCrQGn8hHU1+bILelbHZE7SB7noxBQgroRq60rHakcFvFBINPvM0lR
+TfWQGAeZ3wKBgFYzYNJCeZ4//83N1FcH9vPXIU8WMwa9S7CvLz+mvgJXQSW7M304
+ZZ6Zdv4nFm/orqzHKm5XMOGT+duCT1vRDZExmwVp4J2QWmEGtxu7Wwssyr90yJSU
+iEuy+wIBan1UceUzWC50UYuAk3xHIseT+gPaHK5gPZB1xTrmJS/1DBhhAoGAYEm3
+7Hzb95fVe5pxvUJyzzcLWy3m+ra8XJMzCAN8x8Ag4R8YPnMPtYxalEgKfW3uhyv2
+r/wxuTGJ5vXbqjflqfuiThyNmKQr5QVYet5lOX0hkhTE/Su3E5EADNmDnGef4YqV
+GJJf+ccz9kWS8WV3gKj1wwtOJ9oVbmcZwYWP7k0CgYEAjHNfuxAhr+8RQp/QJ21l
+CoIS0dv3yLKIdZrpk2CopYahaAXy5ExVKXhZVx1Q2eLEO3pbWaTJy1D4pTKGslZV
+WvLwC1cstAaJJQUOl3gZMC9pf6zD1O2UwskxRQUlU8QedCgz38C2EU9L+uztim3D
+AJ213PbIAPPBRZcjSygtb04=
+-----END PRIVATE KEY-----
+</key>
+
+<ca>
+-----BEGIN CERTIFICATE-----
+MIIDVDCCAjygAwIBAgIULO+u7hLmp1dSs3OuBCJ2aLKGJrgwDQYJKoZIhvcNAQEL
+BQAwGTEXMBUGA1UEAwwOSW9UIFByb2plY3QgQ0EwHhcNMjQwNjA0MDkzNDIwWhcN
+MjQwOTAyMDkzNDIwWjAZMRcwFQYDVQQDDA5Jb1QgUHJvamVjdCBDQTCCASIwDQYJ
+KoZIhvcNAQEBBQADggEPADCCAQoCggEBANPoEj+1DNs6mYnMo+Er1VKxtjwrB7eM
+g6oZDy0wUcpHjrLME9RCGVwkxdnqs8S+64lzelFlWRdC2Hrhl1fWgtujBzxeh0cT
+IkCQW81CLMfhSbZhMJDzFeQmR7lA3epKiRDDFO/FY/gxn0dQjwnO67ye+k56Mg2o
+X0EMRFi+HP7Nyy2EthQVeS7hV6GQDlG7kssQWeocMvEdjPm6/i/8m3kyvCySPHpn
+ieutENaJZszfhPFf+dTNwiGlZXSaxYvBZ1KMcd4lJ4Rogy4qk64iwEOEUqVCZKHJ
+6/7RwBybbxzh/xQ64+PIbsHnswb6D0pDjtL2XD4LtrNlkqG/ZabzMS8CAwEAAaOB
+kzCBkDAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBRKPzv+9soxZqVmF8LiuKjdTbUx
+tDBUBgNVHSMETTBLgBRKPzv+9soxZqVmF8LiuKjdTbUxtKEdpBswGTEXMBUGA1UE
+AwwOSW9UIFByb2plY3QgQ0GCFCzvru4S5qdXUrNzrgQidmiyhia4MAsGA1UdDwQE
+AwIBBjANBgkqhkiG9w0BAQsFAAOCAQEAvq3zqa4CMmoYFdnEBOckQyUnZfHM69eV
+HrJnYnjPeOVA2VDHPaJnuAIy53wcUUyt5hIpjUq2fR8TbpqhGN3i6/do69KlTPP7
+UYTtsyILr4jZZPhT2xe3EAFePa2Jtc6ppY5A4BIW6b3aOy23GGEkyhSX8YnXOAII
+rQcvJ4t62/0LOu32dfG6Wck8VD6Sgfw00xMVSFYOXSlbf4GJd3zPQdopWiPHqCaJ
+cMoOWM9n+6iT0q8QnOEQd3kLz+aHEGT/zvJA1nrE9WpinOR7azS8vHt4LdMEdTqH
+IVaNCULYL/agw3joybHV6UYsXCXec89AS4tJP0eQcJQkoi0XYe7shw==
+-----END CERTIFICATE-----
+</ca>
+
