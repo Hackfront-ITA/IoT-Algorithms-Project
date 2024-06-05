@@ -75,7 +75,7 @@ void app_main(void) {
 		N_TASK_STACK_SIZE, &task_args, 10, &th_data_process);
 
 	ESP_LOGI(TAG, "Init LoRa module");
-	ESP_ERROR_CHECK(n_lora_init());
+	ESP_ERROR_CHECK(c_lora_init());
 
 	return;
 }

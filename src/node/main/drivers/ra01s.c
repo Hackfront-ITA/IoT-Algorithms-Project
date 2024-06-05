@@ -97,20 +97,20 @@ __attribute__ ((weak, alias ("LoRaErrorDefault"))) void LoRaError(int error);
 
 void ra01s_init(void)
 {
-	ESP_LOGI(TAG, "N_SPI_PIN_MISO=%d", N_SPI_PIN_MISO);
-	ESP_LOGI(TAG, "N_SPI_PIN_MOSI=%d", N_SPI_PIN_MOSI);
-	ESP_LOGI(TAG, "N_SPI_PIN_SCLK=%d", N_SPI_PIN_SCLK);
-	ESP_LOGI(TAG, "N_SPI_PIN_NSS=%d", N_SPI_PIN_NSS);
-	ESP_LOGI(TAG, "N_SPI_PIN_RST=%d", N_SPI_PIN_RST);
-	ESP_LOGI(TAG, "N_SPI_PIN_BUSY=%d", N_SPI_PIN_BUSY);
-	ESP_LOGI(TAG, "N_SPI_PIN_TXEN=%d", N_SPI_PIN_TXEN);
-	ESP_LOGI(TAG, "N_SPI_PIN_RXEN=%d", N_SPI_PIN_RXEN);
+	ESP_LOGI(TAG, "C_SPI_PIN_MISO=%d", C_SPI_PIN_MISO);
+	ESP_LOGI(TAG, "C_SPI_PIN_MOSI=%d", C_SPI_PIN_MOSI);
+	ESP_LOGI(TAG, "C_SPI_PIN_SCLK=%d", C_SPI_PIN_SCLK);
+	ESP_LOGI(TAG, "C_SPI_PIN_NSS=%d", C_SPI_PIN_NSS);
+	ESP_LOGI(TAG, "C_SPI_PIN_RST=%d", C_SPI_PIN_RST);
+	ESP_LOGI(TAG, "C_SPI_PIN_BUSY=%d", C_SPI_PIN_BUSY);
+	ESP_LOGI(TAG, "C_SPI_PIN_TXEN=%d", C_SPI_PIN_TXEN);
+	ESP_LOGI(TAG, "C_SPI_PIN_RXEN=%d", C_SPI_PIN_RXEN);
 
-	SX126x_SPI_SELECT = N_SPI_PIN_NSS;
-	SX126x_RESET = N_SPI_PIN_RST;
-	SX126x_BUSY	= N_SPI_PIN_BUSY;
-	SX126x_TXEN	= N_SPI_PIN_TXEN;
-	SX126x_RXEN	= N_SPI_PIN_RXEN;
+	SX126x_SPI_SELECT = C_SPI_PIN_NSS;
+	SX126x_RESET = C_SPI_PIN_RST;
+	SX126x_BUSY	= C_SPI_PIN_BUSY;
+	SX126x_TXEN	= C_SPI_PIN_TXEN;
+	SX126x_RXEN	= C_SPI_PIN_RXEN;
 
 	txActive = false;
 	debugPrint = false;
@@ -136,15 +136,15 @@ void ra01s_init(void)
 	}
 
 	spi_bus_config_t spi_bus_config = {
-		.sclk_io_num = N_SPI_PIN_SCLK,
-		.mosi_io_num = N_SPI_PIN_MOSI,
-		.miso_io_num = N_SPI_PIN_MISO,
+		.sclk_io_num = C_SPI_PIN_SCLK,
+		.mosi_io_num = C_SPI_PIN_MOSI,
+		.miso_io_num = C_SPI_PIN_MISO,
 		.quadwp_io_num = -1,
 		.quadhd_io_num = -1
 	};
 
 	esp_err_t ret;
-	ret = spi_bus_initialize( N_SPI_HOST_ID, &spi_bus_config, SPI_DMA_CH_AUTO );
+	ret = spi_bus_initialize( C_SPI_HOST_ID, &spi_bus_config, SPI_DMA_CH_AUTO );
 	ESP_LOGI(TAG, "spi_bus_initialize=%d",ret);
 	assert(ret==ESP_OK);
 
@@ -160,7 +160,7 @@ void ra01s_init(void)
 	devcfg.flags = SPI_DEVICE_NO_DUMMY;
 
 	//spi_device_handle_t handle;
-	ret = spi_bus_add_device( N_SPI_HOST_ID, &devcfg, &SpiHandle);
+	ret = spi_bus_add_device( C_SPI_HOST_ID, &devcfg, &SpiHandle);
 	ESP_LOGI(TAG, "spi_bus_add_device=%d",ret);
 	assert(ret==ESP_OK);
 
