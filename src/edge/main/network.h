@@ -1,9 +1,9 @@
-#ifndef A_NETWORK_H
-#define A_NETWORK_H
+#ifndef C_NETWORK_H
+#define C_NETWORK_H
 
 #include "esp_err.h"
 
-esp_err_t n_network_connect(void);
-esp_err_t n_network_disconnect(void);
+esp_err_t c_network_connect(void);
+esp_err_t c_network_disconnect(void);
 
-#endif /* end of include guard: A_NETWORK_H */
+#endif /* end of include guard: C_NETWORK_H */

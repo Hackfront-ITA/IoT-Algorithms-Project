@@ -41,7 +41,7 @@ static void wifi_handle_connect(void *esp_netif,
 static void wifi_handle_got_ip(void *arg,
 		esp_event_base_t event_base, int32_t event_id, void *event_data);
 
-esp_err_t n_network_connect(void) {
+esp_err_t c_network_connect(void) {
 	esp_err_t ret;
 
 	ESP_ERROR_CHECK(esp_netif_init());
@@ -82,7 +82,7 @@ esp_err_t n_network_connect(void) {
 	return ESP_OK;
 }
 
-esp_err_t n_network_disconnect(void) {
+esp_err_t c_network_disconnect(void) {
 	wifi_shutdown();
 	ESP_ERROR_CHECK(esp_unregister_shutdown_handler(&wifi_shutdown));
 	return ESP_OK;
