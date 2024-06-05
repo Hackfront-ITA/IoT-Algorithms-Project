@@ -4,17 +4,14 @@
 #include <freertos/task.h>
 
 #include <esp_err.h>
-#include <esp_event.h>
 #include <esp_log.h>
-#include <nvs_flash.h>
 
 #include "tasks/tasks.h"
 #include "adxl345.h"
 #include "config.h"
 #include "fft.h"
 #include "i2c.h"
-#include "mqtt.h"
-#include "network.h"
+#include "lora.h"
 #include "utils.h"
 
 #define N_TASK_STACK_SIZE  4096
@@ -35,11 +32,11 @@ static task_args_t task_args;
 void app_main(void) {
 	ESP_LOGI(TAG, "App start");
 
-	ESP_LOGI(TAG, "NVS flash init");
-	ESP_ERROR_CHECK(nvs_flash_init());
-
-	ESP_LOGI(TAG, "ESP event loop start");
-	ESP_ERROR_CHECK(esp_event_loop_create_default());
+	// ESP_LOGI(TAG, "NVS flash init");
+	// ESP_ERROR_CHECK(nvs_flash_init());
+	//
+	// ESP_LOGI(TAG, "ESP event loop start");
+	// ESP_ERROR_CHECK(esp_event_loop_create_default());
 
 	ESP_LOGI(TAG, "I2C init");
 	ESP_ERROR_CHECK(n_i2c_init());
@@ -77,11 +74,8 @@ void app_main(void) {
 	xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
 		N_TASK_STACK_SIZE, &task_args, 10, &th_data_process);
 
-	// ESP_LOGI(TAG, "Connect to network");
-	// ESP_ERROR_CHECK(n_network_connect());
-	//
-	// ESP_LOGI(TAG, "Connect to MQTT server");
-	// ESP_ERROR_CHECK(n_mqtt_start());
+	ESP_LOGI(TAG, "Init LoRa module");
+	ESP_ERROR_CHECK(n_lora_init());
 
 	return;
 }

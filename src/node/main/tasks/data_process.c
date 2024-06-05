@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include <esp_dsp.h>
 #include <esp_log.h>
@@ -8,7 +9,7 @@
 #include "adxl345.h"
 #include "config.h"
 #include "fft.h"
-#include "mqtt.h"
+#include "lora.h"
 #include "utils.h"
 
 static const char *TAG = "Task data process";
@@ -32,9 +33,9 @@ void task_data_process(task_args_t *task_args) {
 
 		ESP_LOGI(TAG, "Task data_process resumed");
 
-		if (n_mqtt_connected) {
-			ESP_ERROR_CHECK(n_mqtt_publish(MQTT_BASE_TOPIC "/heartbeat", "ALIVE"));
-		}
+		// if (n_lora_initialized) {
+		// 	ESP_ERROR_CHECK(n_lora_send(MQTT_BASE_TOPIC "/heartbeat", "ALIVE"));
+		// }
 
 		float *cur_data_x = &accel_data_x[active_slot * num_samples];
 		float *cur_data_y = &accel_data_y[active_slot * num_samples];
@@ -73,12 +74,20 @@ static void process_axis_data(float *fft_data, char axis, float sampling_freq) {
 		dsps_view(fft_data, DATA_NUM_SAMPLES / 2, 128, 10, 0, +100, '*');
 	}
 
-	// if (n_mqtt_connected) {
+	// if (n_lora_initialized) {
 	// 	ESP_LOGI(TAG, "Sending results");
 	//
-	// 	char buffer[16];
-	// 	snprintf(buffer, sizeof(buffer), "%.05f", 1.23456789);
+	// 	size_t index = rand() % (DATA_NUM_SAMPLES / 2);
+	// 	float frequency = index * sampling_freq / DATA_NUM_SAMPLES;
+	// 	float value = (rand() % 60000) / 1000.0;  // fft_data[index];
 	//
-	// 	ESP_ERROR_CHECK(n_mqtt_publish(MQTT_BASE_TOPIC "/average", buffer));
+	// 	char buffer[128];
+	// 	snprintf(buffer, sizeof(buffer), S_ESCAPE({
+	// 		"axis": "%c",
+	// 		"frequency": %.05f,
+	// 		"value": %.05f
+	// 	}), axis, frequency, value);
+	//
+	// 	ESP_ERROR_CHECK(n_mqtt_publish(MQTT_BASE_TOPIC "/event", buffer));
 	// }
 }

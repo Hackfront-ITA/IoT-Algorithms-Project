@@ -8,7 +8,7 @@
 #define ADXL345_ADDRESS    0x53
 #define ADXL345_DEVID      0xE5
 
-#define ADXL345_MAX_VALUE_G      1000.0
+#define ADXL345_MAX_VALUE_G      2000.0
 #define ADXL345_MAX_VALUE_RAW    0x8000
 
 static const char *TAG = "node_adxl345";

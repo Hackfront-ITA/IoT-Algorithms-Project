@@ -2,19 +2,15 @@ idf_component_register(
 	SRCS
 		"tasks/data_collect.c"
 		"tasks/data_process.c"
+		"drivers/ra01s.c"
 		"adxl345.c"
 		"fft.c"
 		"i2c.c"
+		"lora.c"
 		"main.c"
-		"mqtt.c"
-		"wifi.c"
 	INCLUDE_DIRS
 		"."
 	PRIV_REQUIRES
 		driver
 		esp-dsp
-		esp_netif
-		esp_wifi
-		mqtt
-		nvs_flash
 )

@@ -7,8 +7,8 @@
 #include "i2c.h"
 #include "utils.h"
 
-#define N_I2C_PIN_SDA   20
-#define N_I2C_PIN_SCL   21
+#define N_I2C_PIN_SDA   46
+#define N_I2C_PIN_SCL   45
 #define N_I2C_CLK_FREQ  100000
 #define N_I2C_MASTER_PORT 1
 
