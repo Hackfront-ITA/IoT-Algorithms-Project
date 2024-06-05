@@ -1,0 +1,9 @@
+/build/
+/managed_components/
+
+config.h
+
+*.old
+
+/.cache/
+/.vscode/
