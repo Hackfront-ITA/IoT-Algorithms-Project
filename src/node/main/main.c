@@ -32,12 +32,6 @@ static task_args_t task_args;
 void app_main(void) {
 	ESP_LOGI(TAG, "App start");
 
-	// ESP_LOGI(TAG, "NVS flash init");
-	// ESP_ERROR_CHECK(nvs_flash_init());
-	//
-	// ESP_LOGI(TAG, "ESP event loop start");
-	// ESP_ERROR_CHECK(esp_event_loop_create_default());
-
 	ESP_LOGI(TAG, "I2C init");
 	ESP_ERROR_CHECK(n_i2c_init());
 

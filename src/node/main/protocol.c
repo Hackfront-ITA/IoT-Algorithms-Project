@@ -14,7 +14,6 @@ static const char *TAG = "LoRa";
 static uint16_t dev_id = 0xffff;
 
 static uint8_t tx_buffer[128];
-static uint8_t rx_buffer[128];
 static c_pkt_header_t *pkt_header = (c_pkt_header_t *)(&tx_buffer[0]);
 static uint8_t *pkt_payload = &tx_buffer[sizeof(c_pkt_header_t)];
 
