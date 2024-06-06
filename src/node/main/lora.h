@@ -1,6 +1,8 @@
 #ifndef C_LORA_H
 #define C_LORA_H
 
+#include <stdint.h>
+
 #include <esp_err.h>
 
 #define C_SPI_HOST_ID  SPI2_HOST
@@ -15,13 +17,10 @@
 #define C_SPI_PIN_TXEN   -1
 #define C_SPI_PIN_RXEN   -1
 
-typedef enum {
-	PKT_EMPTY = 0x00,
-	PKT_EVENT = 0x45,
-	PKT_HEARTBEAT = 0x48,
-} c_pkt_type_t;
+extern bool c_lora_initialized;
 
 esp_err_t c_lora_init(void);
-esp_err_t c_lora_send(void);
+esp_err_t c_lora_send(uint8_t data, size_t len, bool async);
+size_t c_lora_receive(uint8_t buffer, size_t len);
 
 #endif /* end of include guard: C_LORA_H */
