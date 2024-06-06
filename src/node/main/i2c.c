@@ -7,8 +7,8 @@
 #include "i2c.h"
 #include "utils.h"
 
-#define N_I2C_PIN_SDA   46
-#define N_I2C_PIN_SCL   45
+#define N_I2C_PIN_SDA   47
+#define N_I2C_PIN_SCL   48
 #define N_I2C_CLK_FREQ  100000
 #define N_I2C_MASTER_PORT 1
 
@@ -40,16 +40,6 @@ esp_err_t n_i2c_init(void) {
 	}
 
 	return ESP_OK;
-}
-
-uint8_t n_i2c_read_u8(uint8_t addr, uint8_t reg) {
-	uint8_t value;
-	ESP_ERROR_CHECK(n_i2c_read(addr, reg, &value, sizeof(uint8_t)));
-	return value;
-}
-
-void n_i2c_write_u8(uint8_t addr, uint8_t reg, uint8_t value) {
-	ESP_ERROR_CHECK(n_i2c_write(addr, reg, &value, sizeof(uint8_t)));
 }
 
 esp_err_t n_i2c_read(uint8_t addr, uint8_t reg, uint8_t *msg, size_t len) {

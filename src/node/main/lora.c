@@ -5,7 +5,6 @@
 
 #include "drivers/ra01s.h"
 #include "lora.h"
-#include "utils.h"
 
 // Standard frequencies: 169 MHz, 433 MHz, 470 MHz, 866 MHz, 915 MHz
 #define C_LORA_FREQUENCY     866000000
@@ -38,14 +37,12 @@ esp_err_t c_lora_init(void) {
 	ra01s_config(C_LORA_SP_FACTOR, C_LORA_BANDWIDTH, C_LORA_CODING_RATE, 8, 0, true, false);
 	ra01s_set_debug(true);
 
-	dev_id = gen_dev_id();
-
 	c_lora_initialized = true;
 
 	return ESP_OK;
 }
 
-esp_err_t c_lora_send(uint8_t data, size_t len, bool async) {
+esp_err_t c_lora_send(uint8_t *data, size_t len, bool async) {
 	bool result = ra01s_send(data, len, async ? SX126x_TXMODE_ASYNC : SX126x_TXMODE_SYNC);
 
 	if (!result) {
@@ -55,7 +52,7 @@ esp_err_t c_lora_send(uint8_t data, size_t len, bool async) {
 	return ESP_OK;
 }
 
-size_t c_lora_receive(uint8_t buffer, size_t len) {
+size_t c_lora_receive(uint8_t *buffer, size_t len) {
 	size_t rsize = ra01s_receive(buffer, len);
 
 	return rsize;

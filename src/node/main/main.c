@@ -12,6 +12,7 @@
 #include "fft.h"
 #include "i2c.h"
 #include "lora.h"
+#include "protocol.h"
 #include "utils.h"
 
 #define N_TASK_STACK_SIZE  4096
@@ -36,7 +37,10 @@ void app_main(void) {
 	ESP_ERROR_CHECK(n_i2c_init());
 
 	ESP_LOGI(TAG, "ADXL345 init");
-	ESP_ERROR_CHECK(adxl345_init());
+	if (adxl345_init() != ESP_OK) {
+		ESP_LOGE(TAG, "Cannot initialize ADXL345. Is accelerometer connected?");
+		return;
+	}
 
 	ESP_LOGI(TAG, "FFT init");
 	ESP_ERROR_CHECK(n_fft_init());
@@ -68,8 +72,11 @@ void app_main(void) {
 	xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
 		N_TASK_STACK_SIZE, &task_args, 10, &th_data_process);
 
-	ESP_LOGI(TAG, "Init LoRa module");
-	ESP_ERROR_CHECK(c_lora_init());
+	ESP_LOGI(TAG, "Protocol init");
+	ESP_ERROR_CHECK(c_proto_init());
+
+	// ESP_LOGI(TAG, "LoRa module init");
+	// ESP_ERROR_CHECK(c_lora_init());
 
 	return;
 }

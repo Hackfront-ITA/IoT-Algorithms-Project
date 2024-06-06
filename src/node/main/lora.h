@@ -1,9 +1,12 @@
 #ifndef C_LORA_H
 #define C_LORA_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include <esp_err.h>
+
+#include "utils.h"
 
 #define C_SPI_HOST_ID  SPI2_HOST
 // #define C_SPI_HOST_ID  SPI3_HOST
@@ -20,7 +23,7 @@
 extern bool c_lora_initialized;
 
 esp_err_t c_lora_init(void);
-esp_err_t c_lora_send(uint8_t data, size_t len, bool async);
-size_t c_lora_receive(uint8_t buffer, size_t len);
+esp_err_t c_lora_send(uint8_t *data, size_t len, bool async);
+size_t c_lora_receive(uint8_t *buffer, size_t len);
 
 #endif /* end of include guard: C_LORA_H */

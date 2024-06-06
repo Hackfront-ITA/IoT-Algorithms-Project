@@ -14,7 +14,15 @@
 static const char *TAG = "node_adxl345";
 
 esp_err_t adxl345_init(void) {
-	uint8_t devid = n_i2c_read_u8(ADXL345_ADDRESS, ADXL345_REG_DEVID);
+	esp_err_t err;
+	uint8_t devid;
+
+	err = n_i2c_read(ADXL345_ADDRESS, ADXL345_REG_DEVID, &devid, sizeof(uint8_t));
+	if (err != ESP_OK) {
+		ESP_LOGE(TAG, "Cannot read from device %02x", ADXL345_ADDRESS);
+		return err;
+	}
+
 	if (devid != ADXL345_DEVID) {
 		ESP_LOGE(TAG, "Device at %02x has unexpected devid (%02x)",
 			ADXL345_ADDRESS, devid);
@@ -22,7 +30,11 @@ esp_err_t adxl345_init(void) {
 	}
 
 	uint8_t power_ctl = 0x08;
-	n_i2c_write_u8(ADXL345_ADDRESS, ADXL345_REG_POWER_CTL, power_ctl);
+	err = n_i2c_write(ADXL345_ADDRESS, ADXL345_REG_POWER_CTL, &power_ctl, sizeof(uint8_t));
+	if (err != ESP_OK) {
+		ESP_LOGE(TAG, "Cannot write to POWER_CTL register");
+		return err;
+	}
 
 	return ESP_OK;
 }

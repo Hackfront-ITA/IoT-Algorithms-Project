@@ -8,6 +8,8 @@ idf_component_register(
 		"i2c.c"
 		"lora.c"
 		"main.c"
+		"protocol.c"
+		"utils.c"
 	INCLUDE_DIRS
 		"."
 	PRIV_REQUIRES

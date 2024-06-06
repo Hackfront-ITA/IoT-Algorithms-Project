@@ -7,4 +7,6 @@
 
 #define S_ESCAPE(...)   #__VA_ARGS__
 
+uint16_t gen_dev_id(void);
+
 #endif /* end of include guard: N_UTILS_H */

@@ -10,6 +10,7 @@
 #include "config.h"
 #include "fft.h"
 #include "lora.h"
+#include "protocol.h"
 #include "utils.h"
 
 static const char *TAG = "Task data process";
@@ -33,7 +34,7 @@ void task_data_process(task_args_t *task_args) {
 
 		ESP_LOGI(TAG, "Task data_process resumed");
 
-		if (n_lora_initialized) {
+		if (c_lora_initialized) {
 			ESP_ERROR_CHECK(c_proto_send(C_PKT_HEARTBEAT, NULL, 0, true));
 		}
 
@@ -84,7 +85,7 @@ static void process_axis_data(float *fft_data, char axis, float sampling_freq) {
 			.frequency = index * sampling_freq / DATA_NUM_SAMPLES,
 			.value = value,
 			.axis = axis
-		}
+		};
 
 		c_proto_send(C_PKT_EVENT, &event, sizeof(c_pkt_event_t), true);
 	}
