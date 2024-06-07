@@ -7,9 +7,11 @@ from threading import Event
 
 from paho.mqtt import client as mqtt_client
 
+BUILDING_ID = 123
+
 MQTT_BROKER = 'localhost'
 MQTT_PORT = 8883
-BASE_TOPIC = '/tests/esp32'
+BASE_TOPIC = f"/buildings/{BUILDING_ID}"
 
 exit = Event()
 mqtt_connected = False
@@ -52,7 +54,7 @@ client.connect(MQTT_BROKER, MQTT_PORT)
 
 client.loop_start()
 
-client.subscribe(BASE_TOPIC + '/event/#')
+client.subscribe(BASE_TOPIC + '/sensors/#')
 client.subscribe(BASE_TOPIC + '/status/#')
 
 while not exit.is_set():
