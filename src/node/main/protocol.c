@@ -12,12 +12,14 @@
 typedef struct {
 	uint16_t magic;
 	uint16_t dev_id;
+	uint32_t epoch;
 	c_pkt_type_t type;
 } c_pkt_header_t;
 
 static const char *TAG = "Protocol";
 
 static uint16_t dev_id = 0xffff;
+static uint32_t epoch = 1;
 
 static uint8_t tx_buffer[128];
 static c_pkt_header_t *pkt_header = (c_pkt_header_t *)(&tx_buffer[0]);
@@ -37,9 +39,10 @@ esp_err_t c_proto_send(c_pkt_type_t type, uint8_t *payload, size_t pl_len, bool 
 		return ESP_FAIL;
 	}
 
-	pkt_header->magic = PKT_MAGIC;
-	pkt_header->dev_id = dev_id;
-	pkt_header->type = type;
+	tx_header->magic = PKT_MAGIC;
+	tx_header->dev_id = dev_id;
+	tx_header->epoch = epoch;
+	tx_header->type = type;
 
 	memcpy(pkt_payload, payload, pl_len);
 
@@ -55,3 +58,7 @@ esp_err_t c_proto_send(c_pkt_type_t type, uint8_t *payload, size_t pl_len, bool 
 //
 // 	return ESP_OK;
 // }
+
+void c_proto_set_epoch(uint32_t new_epoch) {
+	epoch = new_epoch;
+}
