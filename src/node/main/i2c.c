@@ -10,7 +10,6 @@
 
 #define N_I2C_PIN_SDA   47
 #define N_I2C_PIN_SCL   48
-#define N_I2C_CLK_FREQ  100000
 #define N_I2C_MASTER_PORT 1
 
 static const char *TAG = "I2C";
