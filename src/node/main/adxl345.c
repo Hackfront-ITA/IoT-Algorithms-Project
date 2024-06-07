@@ -12,8 +12,9 @@
 #define ADXL345_DEVID      0xE5
 #define ADXL345_I2C_SCL_RATE_HZ      100000 //100kHz
 
-#define ADXL345_MAX_VALUE_G      2000.0
-#define ADXL345_MAX_VALUE_RAW    0x8000
+#define ADXL345_G_RANGE     4.0 	// +/- 2g
+#define ADXL345_RESOLUTION  1024	// 2^10
+#define mG_COEFF ADXL345_G_RANGE / ADXL345_RESOLUTION
 
 static const char *TAG = "node_adxl345";
 static i2c_master_dev_handle_t acc_handle;
@@ -68,21 +69,22 @@ esp_err_t adxl345_init(void) {
 	return ESP_OK;
 }
 
-esp_err_t adxl345_read_data(adxl345_norm_data_t *value) {
+esp_err_t adxl345_read_data(adxl345_g_data_t *value) {
 
 	esp_err_t ret;
-	adxl345_raw_data_t raw_data;
+	uint8_t raw_data[6];
 
-	ret = n_i2c_read(acc_handle, ADXL345_REG_DATA,
-		(uint8_t *)(&raw_data), sizeof(adxl345_raw_data_t), -1);
+	// Reading raw data
+	ret = n_i2c_read(acc_handle, ADXL345_REG_DATA, raw_data, sizeof(raw_data), -1);
 	if (ret != ESP_OK) {
 		ESP_LOGE(TAG, "Error reading from ADXL345, rc = %x", ret);
 		return ret;
 	}
 
-	value->x = raw_data.x * ADXL345_MAX_VALUE_G / ADXL345_MAX_VALUE_RAW;
-	value->y = raw_data.y * ADXL345_MAX_VALUE_G / ADXL345_MAX_VALUE_RAW;
-	value->z = raw_data.z * ADXL345_MAX_VALUE_G / ADXL345_MAX_VALUE_RAW;
+	// Computing g values
+	value->x = ((int)(raw_data[1] << 8 | raw_data[0])) * mG_COEFF;
+	value->y = ((int)(raw_data[3] << 8 | raw_data[2])) * mG_COEFF;
+	value->z = ((int)(raw_data[5] << 8 | raw_data[4])) * mG_COEFF;
 
 	return ESP_OK;
 }

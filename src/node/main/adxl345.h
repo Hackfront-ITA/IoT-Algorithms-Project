@@ -44,9 +44,9 @@ typedef struct {
 	float x;
 	float y;
 	float z;
-} adxl345_norm_data_t;
+} adxl345_g_data_t;
 
 esp_err_t adxl345_init(void);
-esp_err_t adxl345_read_data(adxl345_norm_data_t *value);
+esp_err_t adxl345_read_data(adxl345_g_data_t *value);
 
 #endif /* end of include guard: N_ADXL_345_H */
