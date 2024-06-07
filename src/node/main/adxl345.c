@@ -2,6 +2,7 @@
 #include <esp_log.h>
 
 #include <driver/i2c_master.h>
+#include <stdint.h>
 
 #include "adxl345.h"
 #include "i2c.h"
@@ -21,8 +22,7 @@ esp_err_t adxl345_init(void) {
 
 	esp_err_t ret;
 
-	// add device to i2c bus
-
+	// Add accelerometer to i2c bus
 	i2c_device_config_t acc_cfg = {
 	    .dev_addr_length = I2C_ADDR_BIT_LEN_7,
 	    .device_address = ADXL345_ADDRESS,
@@ -54,6 +54,14 @@ esp_err_t adxl345_init(void) {
 	ret = n_i2c_write(acc_handle, ADXL345_REG_POWER_CTL, &power_ctl_val, sizeof(uint8_t), -1);
 	if (ret != ESP_OK) {
 		ESP_LOGE(TAG, "Cannot write to POWER_CTL register");
+		return ret;
+	}
+
+	// Set resolution to +/- 2g
+	uint8_t data_format_val = 0x0;
+	ret = n_i2c_write(acc_handle, ADXL345_REG_DATA_FORMAT, &data_format_val, sizeof(uint8_t),-1);
+	if (ret != ESP_OK) {
+		ESP_LOGE(TAG, "Cannot write to DATA_FORMAT register");
 		return ret;
 	}
 
