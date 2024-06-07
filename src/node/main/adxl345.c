@@ -10,10 +10,11 @@
 
 #define ADXL345_ADDRESS    0x53
 #define ADXL345_DEVID      0xE5
-#define ADXL345_I2C_SCL_RATE_HZ      100000 //100kHz
+// Accelerometer data rate is limited by I2C at SCL*2 / 1000 Hz
+#define ADXL345_I2C_SCL_RATE_HZ 200000
 
 #define ADXL345_G_RANGE     4.0 	// +/- 2g
-#define ADXL345_RESOLUTION  1024	// 2^10
+#define ADXL345_RESOLUTION  1024	// 10 bits resolution
 #define mG_COEFF ADXL345_G_RANGE / ADXL345_RESOLUTION
 
 static const char *TAG = "node_adxl345";
@@ -60,9 +61,17 @@ esp_err_t adxl345_init(void) {
 
 	// Set resolution to +/- 2g
 	uint8_t data_format_val = 0x0;
-	ret = n_i2c_write(acc_handle, ADXL345_REG_DATA_FORMAT, &data_format_val, sizeof(uint8_t),-1);
+	ret = n_i2c_write(acc_handle, ADXL345_REG_DATA_FORMAT, &data_format_val, sizeof(uint8_t), -1);
 	if (ret != ESP_OK) {
 		ESP_LOGE(TAG, "Cannot write to DATA_FORMAT register");
+		return ret;
+	}
+
+	// Set output data rate to 400Hz
+	uint8_t bw_rate_val = 0x0B;
+	ret = n_i2c_write(acc_handle, ADXL345_REG_BW_RATE, &bw_rate_val, sizeof(uint8_t), -1);
+	if (ret != ESP_OK) {
+		ESP_LOGE(TAG, "Cannot write to BW_RATE register");
 		return ret;
 	}
 
