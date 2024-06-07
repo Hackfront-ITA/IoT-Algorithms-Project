@@ -22,6 +22,7 @@
 
 TaskHandle_t th_data_collect = NULL;
 TaskHandle_t th_data_process = NULL;
+TaskHandle_t th_time_sync = NULL;
 
 static float accel_data[N_NUM_AXIS * N_NUM_SLOTS * DATA_NUM_SAMPLES];
 static float fft_data[DATA_NUM_SAMPLES];
@@ -67,6 +68,10 @@ void app_main(void) {
 	ESP_LOGI(TAG, "Create data collecting task");
 	xTaskCreate((TaskFunction_t)(task_data_collect), "Data collecting task",
 		N_TASK_STACK_SIZE, &task_args, 24, &th_data_collect);
+
+	ESP_LOGI(TAG, "Create time sync task");
+	xTaskCreate((TaskFunction_t)(task_time_sync), "Time sync task",
+		N_TASK_STACK_SIZE, &task_args, 24, &th_time_sync);
 
 	ESP_LOGI(TAG, "Create data processing task");
 	xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
