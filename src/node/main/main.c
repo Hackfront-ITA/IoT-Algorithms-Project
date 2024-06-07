@@ -66,11 +66,11 @@ void app_main(void) {
 
 	ESP_LOGI(TAG, "Create data collecting task");
 	xTaskCreate((TaskFunction_t)(task_data_collect), "Data collecting task",
-		N_TASK_STACK_SIZE, &task_args, 10, &th_data_collect);
+		N_TASK_STACK_SIZE, &task_args, 24, &th_data_collect);
 
 	ESP_LOGI(TAG, "Create data processing task");
 	xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
-		N_TASK_STACK_SIZE, &task_args, 10, &th_data_process);
+		N_TASK_STACK_SIZE, &task_args, 20, &th_data_process);
 
 	ESP_LOGI(TAG, "Protocol init");
 	ESP_ERROR_CHECK(c_proto_init());
