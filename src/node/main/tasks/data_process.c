@@ -87,6 +87,6 @@ static void process_axis_data(float *fft_data, char axis, float sampling_freq) {
 			.axis = axis
 		};
 
-		c_proto_send(C_PKT_EVENT, &event, sizeof(c_pkt_event_t), true);
+		c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t), true);
 	}
 }

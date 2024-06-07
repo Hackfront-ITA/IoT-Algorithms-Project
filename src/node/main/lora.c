@@ -26,6 +26,7 @@ static const char *TAG = "LoRa";
 bool c_lora_initialized = false;
 
 esp_err_t c_lora_init(void) {
+	ra01s_set_debug(true);
 	ra01s_init();
 
 	uint16_t err = ra01s_begin(C_LORA_FREQUENCY, C_LORA_TX_POWER, C_LORA_TCXO_VCC, C_LORA_USE_LDO);
@@ -35,7 +36,6 @@ esp_err_t c_lora_init(void) {
 	}
 
 	ra01s_config(C_LORA_SP_FACTOR, C_LORA_BANDWIDTH, C_LORA_CODING_RATE, 8, 0, true, false);
-	ra01s_set_debug(true);
 
 	c_lora_initialized = true;
 
