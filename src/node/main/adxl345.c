@@ -15,7 +15,7 @@
 
 #define ADXL345_G_RANGE     4.0 	// +/- 2g
 #define ADXL345_RESOLUTION  1024	// 10 bits resolution
-#define mG_COEFF ADXL345_G_RANGE / ADXL345_RESOLUTION
+#define mG_COEFF            (ADXL345_G_RANGE / ADXL345_RESOLUTION)
 
 static const char *TAG = "node_adxl345";
 static i2c_master_dev_handle_t acc_handle;
@@ -81,19 +81,20 @@ esp_err_t adxl345_init(void) {
 esp_err_t adxl345_read_data(adxl345_g_data_t *value) {
 
 	esp_err_t ret;
-	uint8_t raw_data[6];
+	adxl345_raw_data_t raw_data;
 
 	// Reading raw data
-	ret = n_i2c_read(acc_handle, ADXL345_REG_DATA, raw_data, sizeof(raw_data), -1);
+	ret = n_i2c_read(acc_handle, ADXL345_REG_DATA,
+		(uint8_t *)(&raw_data), sizeof(adxl345_raw_data_t), -1);
 	if (ret != ESP_OK) {
 		ESP_LOGE(TAG, "Error reading from ADXL345, rc = %x", ret);
 		return ret;
 	}
 
 	// Computing g values
-	value->x = ((int)(raw_data[1] << 8 | raw_data[0])) * mG_COEFF;
-	value->y = ((int)(raw_data[3] << 8 | raw_data[2])) * mG_COEFF;
-	value->z = ((int)(raw_data[5] << 8 | raw_data[4])) * mG_COEFF;
+	value->x = raw_data.x * mG_COEFF * 10.0;
+	value->y = raw_data.y * mG_COEFF * 10.0;
+	value->z = raw_data.z * mG_COEFF * 10.0;
 
 	return ESP_OK;
 }
