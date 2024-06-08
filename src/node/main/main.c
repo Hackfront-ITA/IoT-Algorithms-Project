@@ -65,6 +65,10 @@ void app_main(void) {
 	task_args.num_samples = DATA_NUM_SAMPLES;
 	task_args.sampling_freq = DATA_SAMPLING_FREQ;
 
+	ESP_LOGI(TAG, "Create data processing task");
+	xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
+		N_TASK_STACK_SIZE, &task_args, 20, &th_data_process);
+
 	ESP_LOGI(TAG, "Create data collecting task");
 	xTaskCreate((TaskFunction_t)(task_data_collect), "Data collecting task",
 		N_TASK_STACK_SIZE, &task_args, 24, &th_data_collect);
@@ -72,10 +76,6 @@ void app_main(void) {
 	ESP_LOGI(TAG, "Create time sync task");
 	xTaskCreate((TaskFunction_t)(task_time_sync), "Time sync task",
 		N_TASK_STACK_SIZE, &task_args, 24, &th_time_sync);
-
-	ESP_LOGI(TAG, "Create data processing task");
-	xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
-		N_TASK_STACK_SIZE, &task_args, 20, &th_data_process);
 
 	ESP_LOGI(TAG, "Protocol init");
 	ESP_ERROR_CHECK(c_proto_init());
