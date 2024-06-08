@@ -40,6 +40,8 @@ void task_data_collect(task_args_t *task_args) {
 
 		active_slot = (active_slot + 1) % 2;
 
-		vTaskResume(th_data_process);
+		if (th_data_process != NULL) {
+			vTaskResume(th_data_process);
+		}
 	}
 }
