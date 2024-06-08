@@ -11,6 +11,7 @@
 #include "config.h"
 #include "mqtt.h"
 #include "network.h"
+#include "protocol.h"
 #include "utils.h"
 
 #define N_TASK_STACK_SIZE  4096
@@ -29,6 +30,12 @@ void app_main(void) {
 	// ESP_LOGI(TAG, "Create data processing task");
 	// xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
 	// 	N_TASK_STACK_SIZE, &task_args, 10, &th_data_process);
+
+	ESP_LOGI(TAG, "Protocol init");
+	ESP_ERROR_CHECK(c_proto_init());
+
+	// ESP_LOGI(TAG, "LoRa module init");
+	// ESP_ERROR_CHECK(c_lora_init());
 
 	ESP_LOGI(TAG, "Connect to network");
 	ESP_ERROR_CHECK(c_network_connect());

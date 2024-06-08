@@ -4,6 +4,7 @@
 #include <mqtt_client.h>
 
 #include "config.h"
+#include "utils.h"
 
 bool c_mqtt_connected = false;
 
@@ -78,7 +79,7 @@ static void c_mqtt_on_connect(void *handler_args,
 
 	c_mqtt_connected = true;
 
-	c_mqtt_publish(MQTT_BASE_TOPIC "/status", "BOOTED");
+	c_mqtt_publish("/buildings/" S_ESCAPE(BUILDING_ID) "/controller", "BOOTED");
 	ESP_LOGI(TAG, "Sent alive message");
 };
 

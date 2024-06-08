@@ -1,11 +1,17 @@
 idf_component_register(
 	SRCS
+		"drivers/ra01s.c"
+		"tasks/data_receive.c"
+		"lora.c"
 		"main.c"
 		"mqtt.c"
+		"protocol.c"
+		"utils.c"
 		"wifi.c"
 	INCLUDE_DIRS
 		"."
 	PRIV_REQUIRES
+		driver
 		esp_netif
 		esp_wifi
 		mqtt
