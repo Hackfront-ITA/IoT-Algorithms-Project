@@ -15,8 +15,8 @@
 
 // TCXO yes:  VCC = 3.3, LDO = true
 // TCXO no:   VCC = 0.0, LDO = false
-#define C_LORA_TCXO_VCC       0.0
-#define C_LORA_USE_LDO        false
+#define C_LORA_TCXO_VCC       3.3
+#define C_LORA_USE_LDO        true
 
 #define C_LORA_SP_FACTOR      7
 #define C_LORA_BANDWIDTH      4
