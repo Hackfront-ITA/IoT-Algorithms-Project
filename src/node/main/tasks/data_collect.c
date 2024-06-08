@@ -22,9 +22,9 @@ void task_data_collect(task_args_t *task_args) {
 	uint16_t sampling_ticks = 1000 / (sampling_freq * portTICK_PERIOD_MS);
 
 	while (1) {
-		float *cur_data_x = &accel_data_x[active_slot * num_samples];
-		float *cur_data_y = &accel_data_y[active_slot * num_samples];
-		float *cur_data_z = &accel_data_z[active_slot * num_samples];
+		float *cur_data_x = &accel_data_x[active_slot * 3 * num_samples];
+		float *cur_data_y = &accel_data_y[active_slot * 3 * num_samples];
+		float *cur_data_z = &accel_data_z[active_slot * 3 * num_samples];
 
 		adxl345_g_data_t value;
 

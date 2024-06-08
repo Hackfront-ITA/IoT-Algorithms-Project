@@ -56,9 +56,9 @@ void app_main(void) {
 	// 	return;
 	// }
 
-	task_args.accel_data_x = &accel_data[0 * N_NUM_SLOTS * DATA_NUM_SAMPLES];
-	task_args.accel_data_y = &accel_data[1 * N_NUM_SLOTS * DATA_NUM_SAMPLES];
-	task_args.accel_data_z = &accel_data[2 * N_NUM_SLOTS * DATA_NUM_SAMPLES];
+	task_args.accel_data_x = &accel_data[0 * DATA_NUM_SAMPLES];
+	task_args.accel_data_y = &accel_data[1 * DATA_NUM_SAMPLES];
+	task_args.accel_data_z = &accel_data[2 * DATA_NUM_SAMPLES];
 
 	task_args.fft_data = fft_data;
 

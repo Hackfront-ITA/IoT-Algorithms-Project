@@ -38,9 +38,9 @@ void task_data_process(task_args_t *task_args) {
 			ESP_ERROR_CHECK(c_proto_send(C_PKT_HEARTBEAT, NULL, 0, true));
 		}
 
-		float *cur_data_x = &accel_data_x[active_slot * num_samples];
-		float *cur_data_y = &accel_data_y[active_slot * num_samples];
-		float *cur_data_z = &accel_data_z[active_slot * num_samples];
+		float *cur_data_x = &accel_data_x[active_slot * 3 * num_samples];
+		float *cur_data_y = &accel_data_y[active_slot * 3 * num_samples];
+		float *cur_data_z = &accel_data_z[active_slot * 3 * num_samples];
 
 		ESP_LOGI(TAG, "Processing axis data X");
 		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
