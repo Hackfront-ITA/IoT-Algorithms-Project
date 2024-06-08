@@ -35,7 +35,7 @@ void task_data_process(task_args_t *task_args) {
 		ESP_LOGI(TAG, "Task data_process resumed");
 
 		if (c_lora_initialized) {
-			ESP_ERROR_CHECK(c_proto_send(C_PKT_HEARTBEAT, NULL, 0, true));
+			c_proto_send(C_PKT_HEARTBEAT, NULL, 0, false);
 		}
 
 		float *cur_data_x = &accel_data_x[active_slot * 3 * num_samples];
@@ -87,6 +87,6 @@ static void process_axis_data(float *fft_data, char axis, float sampling_freq) {
 			.axis = axis
 		};
 
-		c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t), true);
+		c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t), false);
 	}
 }
