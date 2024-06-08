@@ -39,10 +39,10 @@ esp_err_t c_proto_send(c_pkt_type_t type, uint8_t *payload, size_t pl_len, bool 
 		return ESP_FAIL;
 	}
 
-	tx_header->magic = PKT_MAGIC;
-	tx_header->dev_id = dev_id;
-	tx_header->epoch = epoch;
-	tx_header->type = type;
+	pkt_header->magic = PKT_MAGIC;
+	pkt_header->dev_id = dev_id;
+	pkt_header->epoch = epoch;
+	pkt_header->type = type;
 
 	memcpy(pkt_payload, payload, pl_len);
 

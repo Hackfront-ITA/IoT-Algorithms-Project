@@ -2,6 +2,7 @@ idf_component_register(
 	SRCS
 		"tasks/data_collect.c"
 		"tasks/data_process.c"
+		"tasks/time_sync.c"
 		"drivers/ra01s.c"
 		"adxl345.c"
 		"fft.c"
