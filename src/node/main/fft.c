@@ -129,21 +129,24 @@ esp_err_t n_fft_execute(float *input, float *output) {
 	return ESP_OK;
 }
 
-void n_fft_get_outliers(float* input, float* output) {
+void n_fft_compute_z_score(float* input, float* output) {
 	unsigned int samples_num = fft_size/2;
 
-	unsigned int mean = 0;
+	float mean = 0;
 	for (size_t i = 0; i < samples_num; i++) {
 		mean += input[i] / samples_num;
 	}
+	ESP_LOGI(TAG, "Mean: %f", mean);
 
-	int variance = 0;
+	float variance = 0;
 	for (size_t i = 0; i < samples_num; i++) {
 		variance += pow(input[i] - mean, 2) / samples_num;
 	}
+	ESP_LOGI(TAG, "Variance: %f", variance);
 
 	// Standard deviation
-	int std_dev = sqrt(variance);
+	float std_dev = sqrt(variance);
+	ESP_LOGI(TAG, "Standard dev: %f", std_dev);
 
 	// Compute z score for each frequency
 	for (size_t i = 0; i < samples_num; i++) {

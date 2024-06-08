@@ -66,6 +66,31 @@ void task_data_process(task_args_t *task_args) {
 		ESP_ERROR_CHECK(n_fft_execute(cur_data_z, fft_data));
 		process_axis_data(fft_data, 'z', sampling_freq);
 
+		//Getting outliers
+		ESP_LOGI(TAG, "Outliers on X");
+		n_fft_compute_z_score(cur_data_x, cur_data_x);
+		for(int i = 0; i < num_samples/2; i++) {
+			if (cur_data_x[i] > 3) {
+				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, cur_data_x[i]);
+			}
+		}
+
+		ESP_LOGI(TAG, "Outliers on Y");
+		n_fft_compute_z_score(cur_data_y, cur_data_y);
+		for(int i = 0; i < num_samples/2; i++) {
+			if (cur_data_y[i] > 3) {
+				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, cur_data_y[i]);
+			}
+		}
+
+		ESP_LOGI(TAG, "Outliers on Z");
+		n_fft_compute_z_score(cur_data_z, cur_data_z);
+		for(int i = 0; i < num_samples/2; i++) {
+			if (cur_data_z[i] > 3) {
+				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, cur_data_z[i]);
+			}
+		}
+
 		active_slot = (active_slot + 1) % 2;
 	}
 }
