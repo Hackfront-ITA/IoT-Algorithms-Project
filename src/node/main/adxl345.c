@@ -11,7 +11,7 @@
 #define ADXL345_ADDRESS    0x53
 #define ADXL345_DEVID      0xE5
 // Accelerometer data rate is limited by I2C at SCL*2 / 1000 Hz
-#define ADXL345_I2C_SCL_RATE_HZ 200000
+#define ADXL345_I2C_SCL_RATE_HZ 400000 // Fast mode
 
 #define ADXL345_G_RANGE     4.0 	// +/- 2g
 #define ADXL345_RESOLUTION  1024	// 10 bits resolution
@@ -68,8 +68,8 @@ esp_err_t adxl345_init(void) {
 	}
 
 	// Set output data rate to 400Hz
-	uint8_t bw_rate_val = 0x0B;
-	ret = n_i2c_write(acc_handle, ADXL345_REG_BW_RATE, &bw_rate_val, sizeof(uint8_t), -1);
+	uint8_t bw_rate_val = ADXL345_OUTPUT_DATA_RATE_400;
+	ret = n_i2c_write(acc_handle, ADXL345_REG_BW_RATE, &bw_rate_val , sizeof(uint8_t), -1);
 	if (ret != ESP_OK) {
 		ESP_LOGE(TAG, "Cannot write to BW_RATE register");
 		return ret;

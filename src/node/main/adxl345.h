@@ -34,6 +34,11 @@
 #define ADXL345_REG_FIFO_CTL        0x38  // FIFO control
 #define ADXL345_REG_FIFO_STATUS     0x39  // FIFO status
 
+#define ADXL345_OUTPUT_DATA_RATE_200 0x0B
+#define ADXL345_OUTPUT_DATA_RATE_400 0x0C
+#define ADXL345_OUTPUT_DATA_RATE_800 0x0D
+#define ADXL345_OUTPUT_DATA_RATE_1600 0x0E
+
 typedef struct {
 	int16_t x;
 	int16_t y;
