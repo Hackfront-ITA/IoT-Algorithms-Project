@@ -23,7 +23,6 @@
 #define C_LORA_CODING_RATE    1
 
 bool c_lora_initialized = false;
-bool c_lora_is_receiving = false;
 
 static const char *TAG = "LoRa";
 
