@@ -29,16 +29,27 @@ static const char *TAG = "LoRa";
 static SemaphoreHandle_t c_lora_busy = NULL;
 
 esp_err_t c_lora_init(void) {
-	ra01s_set_debug(true);
-	ra01s_init();
+	esp_err_t err;
 
-	uint16_t err = ra01s_begin(C_LORA_FREQUENCY, C_LORA_TX_POWER, C_LORA_TCXO_VCC, C_LORA_USE_LDO);
-	if (err != ERR_NONE) {
+	ra01s_set_debug(true);
+
+	err = ra01s_init();
+	if (err != ESP_OK) {
+		ESP_LOGE(TAG, "RA01S init failed");
+		return ESP_FAIL;
+	}
+
+	err = ra01s_begin(C_LORA_FREQUENCY, C_LORA_TX_POWER, C_LORA_TCXO_VCC, C_LORA_USE_LDO);
+	if (err != ESP_OK) {
 		ESP_LOGE(TAG, "RA01S begin failed");
 		return ESP_FAIL;
 	}
 
-	ra01s_config(C_LORA_SP_FACTOR, C_LORA_BANDWIDTH, C_LORA_CODING_RATE, 8, 0, true, false);
+	err = ra01s_config(C_LORA_SP_FACTOR, C_LORA_BANDWIDTH, C_LORA_CODING_RATE, 8, 0, true, false);
+	if (err != ESP_OK) {
+		ESP_LOGE(TAG, "RA01S config failed");
+		return ESP_FAIL;
+	}
 
 	c_lora_busy = xSemaphoreCreateBinary();
 	c_lora_initialized = true;

@@ -80,8 +80,11 @@ void app_main(void) {
 	ESP_LOGI(TAG, "Protocol init");
 	ESP_ERROR_CHECK(c_proto_init());
 
-	// ESP_LOGI(TAG, "LoRa module init");
-	// ESP_ERROR_CHECK(c_lora_init());
+	ESP_LOGI(TAG, "LoRa module init");
+	if (c_lora_init() != ESP_OK) {
+		ESP_LOGE(TAG, "Cannot initialize LoRa module.");
+		return;
+	}
 
 	return;
 }
