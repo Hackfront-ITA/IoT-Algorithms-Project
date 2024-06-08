@@ -9,6 +9,7 @@
 
 #include <driver/spi_master.h>
 #include <driver/gpio.h>
+#include <esp_err.h>
 #include <esp_log.h>
 
 #include "drivers/ra01s.h"
@@ -65,37 +66,23 @@ uint16_t GetIrqStatus(void);
 void     ClearIrqStatus(uint16_t irq);
 void     SetTxEnable(void);
 void     SetRxEnable(void);
-void     SetRx(uint32_t timeout);
-void     SetTx(uint32_t timeoutInMs);
+esp_err_t SetRx(uint32_t timeout);
+esp_err_t SetTx(uint32_t timeoutInMs);
 int      GetPacketLost();
 uint8_t  GetRssiInst();
 void     GetRxBufferStatus(uint8_t *payloadLength, uint8_t *rxStartBufferPointer);
 void     Wakeup(void);
-void     WaitForIdle(unsigned long timeout);
+esp_err_t WaitForIdle(unsigned long timeout);
 uint8_t  ReadBuffer(uint8_t *rxData, int16_t rxDataLen);
 void     WriteBuffer(uint8_t *txData, int16_t txDataLen);
 void     WriteRegister(uint16_t reg, uint8_t* data, uint8_t numBytes);
 void     ReadRegister(uint16_t reg, uint8_t* data, uint8_t numBytes);
-void     WriteCommand(uint8_t cmd, uint8_t* data, uint8_t numBytes);
+esp_err_t WriteCommand(uint8_t cmd, uint8_t* data, uint8_t numBytes);
 uint8_t  WriteCommand2(uint8_t cmd, uint8_t* data, uint8_t numBytes);
 void     ReadCommand(uint8_t cmd, uint8_t* data, uint8_t numBytes);
 void     SPItransfer(uint8_t cmd, bool write, uint8_t* dataOut, uint8_t* dataIn, uint8_t numBytes, bool waitForBusy);
-void     LoRaError(int error);
 
-void LoRaErrorDefault(int error)
-{
-	if (debugPrint) {
-		ESP_LOGE(TAG, "LoRaErrorDefault=%d", error);
-	}
-	while (true) {
-		vTaskDelay(1);
-	}
-}
-
-__attribute__ ((weak, alias ("LoRaErrorDefault"))) void LoRaError(int error);
-
-
-void ra01s_init(void)
+esp_err_t ra01s_init(void)
 {
 	ESP_LOGI(TAG, "C_SPI_PIN_MISO=%d", C_SPI_PIN_MISO);
 	ESP_LOGI(TAG, "C_SPI_PIN_MOSI=%d", C_SPI_PIN_MOSI);
@@ -145,8 +132,10 @@ void ra01s_init(void)
 
 	esp_err_t ret;
 	ret = spi_bus_initialize( C_SPI_HOST_ID, &spi_bus_config, SPI_DMA_CH_AUTO );
-	ESP_LOGI(TAG, "spi_bus_initialize=%d",ret);
-	assert(ret==ESP_OK);
+	if (ret != ESP_OK) {
+		ESP_LOGE(TAG, "spi_bus_initialize=%d",ret);
+		return ret;
+	}
 
 	spi_device_interface_config_t devcfg;
 	memset( &devcfg, 0, sizeof( spi_device_interface_config_t ) );
@@ -161,18 +150,12 @@ void ra01s_init(void)
 
 	//spi_device_handle_t handle;
 	ret = spi_bus_add_device( C_SPI_HOST_ID, &devcfg, &SpiHandle);
-	ESP_LOGI(TAG, "spi_bus_add_device=%d",ret);
-	assert(ret==ESP_OK);
+	if (ret != ESP_OK) {
+		ESP_LOGE(TAG, "spi_bus_add_device=%d",ret);
+		return ret;
+	}
 
-#if 0
-	pinMode(SX126x_SPI_SELECT, OUTPUT);
-	pinMode(SX126x_RESET, OUTPUT);
-	pinMode(SX126x_BUSY, INPUT);
-	if (SX126x_TXEN != -1) pinMode(SX126x_TXEN, OUTPUT);
-	if (SX126x_RXEN != -1) pinMode(SX126x_RXEN, OUTPUT);
-
-	SPI.begin();
-#endif
+	return ESP_OK;
 }
 
 bool spi_write_byte(uint8_t* Dataout, size_t DataLength )
@@ -216,7 +199,7 @@ uint8_t spi_transfer(uint8_t address)
 }
 
 
-int16_t ra01s_begin(uint32_t frequencyInHz, int8_t txPowerInDbm, float tcxoVoltage, bool useRegulatorLDO)
+esp_err_t ra01s_begin(uint32_t frequencyInHz, int8_t txPowerInDbm, float tcxoVoltage, bool useRegulatorLDO)
 {
 	if ( txPowerInDbm > 22 )
 		txPowerInDbm = 22;
@@ -232,7 +215,7 @@ int16_t ra01s_begin(uint32_t frequencyInHz, int8_t txPowerInDbm, float tcxoVolta
 	ESP_LOGI(TAG, "syncWord=0x%x", syncWord);
 	if (syncWord != SX126X_SYNC_WORD_PUBLIC && syncWord != SX126X_SYNC_WORD_PRIVATE) {
 		ESP_LOGE(TAG, "SX126x error, maybe no SPI connection");
-		return ERR_INVALID_MODE;
+		return ESP_FAIL;
 	}
 
 	ESP_LOGI(TAG, "SX126x installed");
@@ -262,19 +245,11 @@ int16_t ra01s_begin(uint32_t frequencyInHz, int8_t txPowerInDbm, float tcxoVolta
 	}
 
 	SetBufferBaseAddress(0, 0);
-#if 0
-	// SX1261_TRANCEIVER
-	SetPaConfig(0x06, 0x00, 0x01, 0x01); // PA Optimal Settings +15 dBm
-	// SX1262_TRANCEIVER
-	SetPaConfig(0x04, 0x07, 0x00, 0x01); // PA Optimal Settings +22 dBm
-	// SX1268_TRANCEIVER
-	SetPaConfig(0x04, 0x07, 0x00, 0x01); // PA Optimal Settings +22 dBm
-#endif
 	SetPaConfig(0x04, 0x07, 0x00, 0x01); // PA Optimal Settings +22 dBm
 	SetOvercurrentProtection(60.0);  // current max 60mA for the whole device
 	SetPowerConfig(txPowerInDbm, SX126X_PA_RAMP_200U); //0 fuer Empfaenger
 	SetRfFrequency(frequencyInHz);
-	return ERR_NONE;
+	return ESP_OK;
 }
 
 void FixInvertedIQ(uint8_t iqConfig)
@@ -303,7 +278,7 @@ void FixInvertedIQ(uint8_t iqConfig)
 }
 
 
-void ra01s_config(uint8_t spreadingFactor, uint8_t bandwidth, uint8_t codingRate, uint16_t preambleLength, uint8_t payloadLen, bool crcOn, bool invertIrq)
+esp_err_t ra01s_config(uint8_t spreadingFactor, uint8_t bandwidth, uint8_t codingRate, uint16_t preambleLength, uint8_t payloadLen, bool crcOn, bool invertIrq)
 {
 	SetStopRxTimerOnPreambleDetect(false);
 	SetLoRaSymbNumTimeout(0);
@@ -346,7 +321,7 @@ void ra01s_config(uint8_t spreadingFactor, uint8_t bandwidth, uint8_t codingRate
 					SX126X_IRQ_NONE); //interrupts on DIO3
 
 	// Receive state no receive timeoout
-	SetRx(0xFFFFFF);
+	return SetRx(0xFFFFFF);
 }
 
 
@@ -753,7 +728,7 @@ void ClearIrqStatus(uint16_t irq)
 }
 
 
-void SetRx(uint32_t timeout)
+esp_err_t SetRx(uint32_t timeout)
 {
 	if (debugPrint) {
 		ESP_LOGI(TAG, "----- SetRx timeout=%"PRIu32, timeout);
@@ -772,8 +747,10 @@ void SetRx(uint32_t timeout)
 	}
 	if ((GetStatus() & 0x70) != 0x50) {
 		ESP_LOGE(TAG, "SetRx Illegal Status");
-		LoRaError(ERR_INVALID_SETRX_STATE);
+		return ESP_FAIL;
 	}
+
+	return ESP_OK;
 }
 
 
@@ -789,7 +766,7 @@ void SetRxEnable(void)
 }
 
 
-void SetTx(uint32_t timeoutInMs)
+esp_err_t SetTx(uint32_t timeoutInMs)
 {
 	if (debugPrint) {
 		ESP_LOGI(TAG, "----- SetTx timeoutInMs=%"PRIu32, timeoutInMs);
@@ -816,8 +793,10 @@ void SetTx(uint32_t timeoutInMs)
 	}
 	if ((GetStatus() & 0x70) != 0x60) {
 		ESP_LOGE(TAG, "SetTx Illegal Status");
-		LoRaError(ERR_INVALID_SETTX_STATE);
+		return ESP_FAIL;
 	}
+
+	return ESP_OK;
 }
 
 
@@ -856,7 +835,7 @@ void GetRxBufferStatus(uint8_t *payloadLength, uint8_t *rxStartBufferPointer)
 }
 
 
-void WaitForIdle(unsigned long timeout)
+esp_err_t WaitForIdle(unsigned long timeout)
 {
     //unsigned long start = millis();
     TickType_t start = xTaskGetTickCount();
@@ -867,8 +846,10 @@ void WaitForIdle(unsigned long timeout)
     }
     if (gpio_get_level(SX126x_BUSY)) {
         ESP_LOGE(TAG, "WaitForIdle Timeout timeout=%lu", timeout);
-        LoRaError(ERR_IDLE_TIMEOUT);
+        return ESP_FAIL;
     }
+
+		return ESP_OK;
 }
 
 
@@ -959,11 +940,6 @@ void WriteRegister(uint16_t reg, uint8_t* data, uint8_t numBytes) {
 
 	// wait for BUSY to go low
 	WaitForIdle(BUSY_WAIT);
-#if 0
-	if(waitForBusy) {
-		WaitForIdle(BUSY_WAIT);
-	}
-#endif
 }
 
 
@@ -996,15 +972,10 @@ void ReadRegister(uint16_t reg, uint8_t* data, uint8_t numBytes) {
 
 	// wait for BUSY to go low
 	WaitForIdle(BUSY_WAIT);
-#if 0
-	if(waitForBusy) {
-		WaitForIdle(BUSY_WAIT);
-	}
-#endif
 }
 
 // WriteCommand with retry
-void WriteCommand(uint8_t cmd, uint8_t* data, uint8_t numBytes) {
+esp_err_t WriteCommand(uint8_t cmd, uint8_t* data, uint8_t numBytes) {
 	uint8_t status;
 	for (int retry=1; retry<10; retry++) {
 		status = WriteCommand2(cmd, data, numBytes);
@@ -1014,8 +985,10 @@ void WriteCommand(uint8_t cmd, uint8_t* data, uint8_t numBytes) {
 	}
 	if (status != 0) {
 		ESP_LOGE(TAG, "SPI Transaction error:0x%02x", status);
-		LoRaError(ERR_SPI_TRANSACTION);
+		return ESP_FAIL;
 	}
+
+	return ESP_OK;
 }
 
 uint8_t WriteCommand2(uint8_t cmd, uint8_t* data, uint8_t numBytes) {
@@ -1058,18 +1031,7 @@ uint8_t WriteCommand2(uint8_t cmd, uint8_t* data, uint8_t numBytes) {
 
 	// wait for BUSY to go low
 	WaitForIdle(BUSY_WAIT);
-#if 0
-	if(waitForBusy) {
-		WaitForIdle(BUSY_WAIT);
-	}
-#endif
 
-#if 0
-	if (status != 0) {
-		ESP_LOGE(TAG, "SPI Transaction error:0x%02x", status);
-		LoRaError(ERR_SPI_TRANSACTION);
-	}
-#endif
 	return status;
 }
 
@@ -1100,9 +1062,4 @@ void ReadCommand(uint8_t cmd, uint8_t* data, uint8_t numBytes) {
 
 	// wait for BUSY to go low
 	WaitForIdle(BUSY_WAIT);
-#if 0
-	if(waitForBusy) {
-		WaitForIdle(BUSY_WAIT);
-	}
-#endif
 }

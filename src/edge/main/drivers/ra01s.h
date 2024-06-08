@@ -2,30 +2,7 @@
 #define _RA01S_H
 
 #include <driver/spi_master.h>
-
-//return values
-#define ERR_NONE                        0
-#define ERR_PACKET_TOO_LONG             1
-#define ERR_UNKNOWN                     2
-#define ERR_TX_TIMEOUT                  3
-#define ERR_RX_TIMEOUT                  4
-#define ERR_CRC_MISMATCH                5
-#define ERR_WRONG_MODEM                 6
-#define ERR_INVALID_BANDWIDTH           7
-#define ERR_INVALID_SPREADING_FACTOR    8
-#define ERR_INVALID_CODING_RATE         9
-#define ERR_INVALID_FREQUENCY_DEVIATION 10
-#define ERR_INVALID_BIT_RATE            11
-#define ERR_INVALID_RX_BANDWIDTH        12
-#define ERR_INVALID_DATA_SHAPING        13
-#define ERR_INVALID_SYNC_WORD           14
-#define ERR_INVALID_OUTPUT_POWER        15
-#define ERR_INVALID_MODE                16
-#define ERR_INVALID_TRANCEIVER          17
-#define ERR_INVALID_SETRX_STATE         18
-#define ERR_INVALID_SETTX_STATE         19
-#define ERR_IDLE_TIMEOUT                20
-#define ERR_SPI_TRANSACTION             21
+#include <esp_err.h>
 
 // SX126X physical layer properties
 #define XTAL_FREQ                       (double)(32000000)
@@ -371,9 +348,12 @@
 #define SX126x_TXMODE_SYNC                            0x02
 #define SX126x_TXMODE_BACK2RX                         0x04
 
-void     ra01s_init(void);
-int16_t  ra01s_begin(uint32_t frequencyInHz, int8_t txPowerInDbm, float tcxoVoltage, bool useRegulatorLDO);
-void     ra01s_config(uint8_t spreadingFactor, uint8_t bandwidth, uint8_t codingRate, uint16_t preambleLength, uint8_t payloadLen, bool crcOn, bool invertIrq);
+esp_err_t ra01s_init(void);
+esp_err_t ra01s_begin(uint32_t frequencyInHz, int8_t txPowerInDbm,
+	float tcxoVoltage, bool useRegulatorLDO);
+esp_err_t ra01s_config(uint8_t spreadingFactor, uint8_t bandwidth,
+	uint8_t codingRate, uint16_t preambleLength, uint8_t payloadLen,
+	bool crcOn, bool invertIrq);
 uint8_t  ra01s_receive(uint8_t *pData, int16_t len);
 bool     ra01s_send(uint8_t *pData, int16_t len, uint8_t mode);
 void     ra01s_set_debug(bool enable);
