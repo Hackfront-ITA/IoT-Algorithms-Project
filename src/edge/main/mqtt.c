@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <esp_log.h>
 #include <mqtt_client.h>
@@ -12,6 +14,7 @@ extern const uint8_t c_mqtt_cert[]   asm("_binary_mqtt_cert_pem_start");
 
 static const char *TAG = "MQTT";
 
+static char c_client_id[16];
 static esp_mqtt_client_config_t c_mqtt_cfg = {
 	.broker = {
 		.address.uri = MQTT_BROKER_URL,
@@ -20,6 +23,9 @@ static esp_mqtt_client_config_t c_mqtt_cfg = {
 			.skip_cert_common_name_check = true,
 			// .common_name = "MQTT Server",
 		}
+	},
+	.credentials = {
+		.client_id = c_client_id,
 	}
 };
 
@@ -35,6 +41,10 @@ static void c_mqtt_on_data(void *handler_args,
 		esp_event_base_t base, int32_t event_id, void *event_data);
 
 esp_err_t c_mqtt_start(void) {
+	int suffix = 1000 + (rand() % 9000);
+
+	snprintf(c_client_id, sizeof(c_client_id), "sm-edge-%04d", suffix);
+
 	c_client = esp_mqtt_client_init(&c_mqtt_cfg);
 	if (c_client == NULL) {
 		return ESP_FAIL;
