@@ -6,8 +6,9 @@
 
 typedef enum {
 	C_PKT_EMPTY = 0x00,
-	C_PKT_EVENT = 0x45,
-	C_PKT_HEARTBEAT = 0x48,
+	C_PKT_EVENT = 0x40,
+	C_PKT_HEARTBEAT = 0x41,
+	C_PKT_TIMESYNC = 0x42,
 } c_pkt_type_t;
 
 typedef struct {
