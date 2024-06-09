@@ -13,6 +13,5 @@
 // #define NET_WIFI_SECURITY WIFI_AUTH_WPA2_WPA3_PSK
 
 #define MQTT_BROKER_URL  "mqtts://<hostname>:8883"
-#define MQTT_BASE_TOPIC  "/tests/esp32"
 
 #endif /* end of include guard: E_CONFIG_H */

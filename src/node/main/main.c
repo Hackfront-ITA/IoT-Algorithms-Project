@@ -47,15 +47,6 @@ void app_main(void) {
 	ESP_ERROR_CHECK(n_fft_init());
 	ESP_ERROR_CHECK(n_fft_set_size(DATA_NUM_SAMPLES));
 
-	// size_t num_entries = N_NUM_AXIS * DATA_NUM_SAMPLES * (N_NUM_SLOTS + 1);
-	//
-	// ESP_LOGI(TAG, "calloc(%d, %d)", num_entries, sizeof(float));
-	// float *accel_data = calloc(num_entries, sizeof(float));
-	// if (accel_data == NULL) {
-	// 	ESP_LOGE(TAG, "Error allocating accel_data");
-	// 	return;
-	// }
-
 	task_args.accel_data_x = &accel_data[0 * DATA_NUM_SAMPLES];
 	task_args.accel_data_y = &accel_data[1 * DATA_NUM_SAMPLES];
 	task_args.accel_data_z = &accel_data[2 * DATA_NUM_SAMPLES];
