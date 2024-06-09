@@ -8,6 +8,7 @@
 #include <esp_log.h>
 #include <nvs_flash.h>
 
+#include "tasks/tasks.h"
 #include "config.h"
 #include "mqtt.h"
 #include "network.h"
@@ -16,7 +17,12 @@
 
 #define N_TASK_STACK_SIZE  4096
 
+TaskHandle_t th_message_relay = NULL;
+
 static const char *TAG = "Main";
+
+static task_args_t task_args = {
+};
 
 void app_main(void) {
 	ESP_LOGI(TAG, "App start");
@@ -27,15 +33,15 @@ void app_main(void) {
 	ESP_LOGI(TAG, "ESP event loop start");
 	ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-	// ESP_LOGI(TAG, "Create data processing task");
-	// xTaskCreate((TaskFunction_t)(task_data_process), "Data processing task",
-	// 	N_TASK_STACK_SIZE, &task_args, 10, &th_data_process);
-
 	ESP_LOGI(TAG, "Protocol init");
 	ESP_ERROR_CHECK(c_proto_init());
 
 	// ESP_LOGI(TAG, "LoRa module init");
 	// ESP_ERROR_CHECK(c_lora_init());
+
+	ESP_LOGI(TAG, "Create message relay task");
+	xTaskCreate((TaskFunction_t)(task_message_relay), "Message relay task",
+		N_TASK_STACK_SIZE, &task_args, 10, &th_message_relay);
 
 	ESP_LOGI(TAG, "Connect to network");
 	ESP_ERROR_CHECK(c_network_connect());

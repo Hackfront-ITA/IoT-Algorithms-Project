@@ -1,7 +1,7 @@
 idf_component_register(
 	SRCS
 		"drivers/ra01s.c"
-		"tasks/data_receive.c"
+		"tasks/message_relay.c"
 		"lora.c"
 		"main.c"
 		"mqtt.c"
