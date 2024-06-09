@@ -1,0 +1,43 @@
+name: iot-project
+
+services:
+  database:
+    image: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIADB_DATABASE: sm_app
+      MARIADB_USER: sm_user
+      MARIADB_PASSWORD: password
+    healthcheck:
+      test: [ "CMD", "/usr/bin/mariadb-admin", "ping", "-uroot", "-ppassword" ]
+      interval: 5s
+      start_period: 20s
+    ports:
+      - 3306:3306
+    volumes:
+      - ./server/res:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/mysql
+  mosquitto:
+    image: eclipse-mosquitto
+    network_mode: host
+    ports:
+      - 1883:1883/tcp
+    read_only: true
+    user: 1000:1000
+    volumes:
+      - ./mosquitto:/mosquitto/config
+  server:
+    build:
+      context: ./server
+    depends_on:
+      database:
+        condition: service_healthy
+        required: true
+      mosquitto:
+        condition: service_started
+        required: true
+    network_mode: host
+    user: 1000:1000
+
+volumes:
+  db-data:
