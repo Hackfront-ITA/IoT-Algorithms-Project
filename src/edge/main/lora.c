@@ -52,6 +52,12 @@ esp_err_t c_lora_init(void) {
 	}
 
 	c_lora_busy = xSemaphoreCreateBinary();
+	if (c_lora_busy == NULL) {
+		ESP_LOGE(TAG, "Cannot create semaphore");
+		return ESP_FAIL;
+	}
+	xSemaphoreGive(c_lora_busy);
+
 	c_lora_initialized = true;
 
 	return ESP_OK;
@@ -60,12 +66,14 @@ esp_err_t c_lora_init(void) {
 esp_err_t c_lora_send(uint8_t *data, size_t len, bool async) {
 	bool taken = xSemaphoreTake(c_lora_busy, C_DELAY_MS(10));
 	if (!taken) {
+		ESP_LOGE(TAG, "Error taking LoRa semaphore");
 		return ESP_FAIL;
 	}
 
 	bool result = ra01s_send(data, len, async ? SX126x_TXMODE_ASYNC : SX126x_TXMODE_SYNC);
 
 	if (!result) {
+		ESP_LOGE(TAG, "Error in ra01s_send()");
 		return ESP_FAIL;
 	}
 
@@ -75,7 +83,7 @@ esp_err_t c_lora_send(uint8_t *data, size_t len, bool async) {
 }
 
 size_t c_lora_receive(uint8_t *buffer, size_t len) {
-	bool taken = xSemaphoreTake(c_lora_busy, 1);
+	bool taken = xSemaphoreTake(c_lora_busy, 0);
 	if (!taken) {
 		return 0;
 	}
