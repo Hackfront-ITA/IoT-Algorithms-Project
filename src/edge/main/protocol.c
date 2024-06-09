@@ -1,3 +1,4 @@
+#include <math.h>
 #include <string.h>
 
 #include <esp_err.h>
@@ -8,6 +9,7 @@
 #include "utils.h"
 
 #define PKT_MAGIC  0xd6d6
+#define VALID_EPOCH_WINDOW  2
 
 typedef struct {
 	uint16_t magic;
@@ -75,4 +77,8 @@ esp_err_t c_proto_receive(uint16_t *dev_id, c_pkt_type_t *type, uint32_t *epoch,
 
 void c_proto_set_epoch(uint32_t new_epoch) {
 	cur_epoch = new_epoch;
+}
+
+bool c_proto_is_valid_epoch(uint32_t epoch) {
+	return abs(cur_epoch - epoch) < VALID_EPOCH_WINDOW;
 }
