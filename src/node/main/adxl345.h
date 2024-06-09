@@ -39,6 +39,8 @@
 #define ADXL345_OUTPUT_DATA_RATE_800 0x0D
 #define ADXL345_OUTPUT_DATA_RATE_1600 0x0E
 
+#define ADXL345_FIFO_SIZE 32
+
 typedef struct {
 	int16_t x;
 	int16_t y;

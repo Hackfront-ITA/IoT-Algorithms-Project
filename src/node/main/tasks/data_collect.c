@@ -4,6 +4,7 @@
 #include <esp_dsp.h>
 #include <esp_log.h>
 
+#include "freertos/projdefs.h"
 #include "tasks/tasks.h"
 #include "adxl345.h"
 
@@ -19,7 +20,8 @@ void task_data_collect(task_args_t *task_args) {
 	size_t num_samples = task_args->num_samples;
 	float sampling_freq = task_args->sampling_freq;
 
-	uint16_t sampling_ticks = 1000 / (sampling_freq * portTICK_PERIOD_MS);
+	uint16_t sampling_period_ticks = 1000 / (sampling_freq * portTICK_PERIOD_MS);
+	// uint16_t fifo_fill_time_ticks = pdMS_TO_TICKS(ADXL345_FIFO_SIZE * 1000 / sampling_freq);
 
 	while (1) {
 		float *cur_data_x = &accel_data_x[active_slot * 3 * num_samples];
@@ -35,8 +37,24 @@ void task_data_collect(task_args_t *task_args) {
 			cur_data_y[i] = value.y;
 			cur_data_z[i] = value.z;
 
-			vTaskDelay(sampling_ticks);
+			vTaskDelay(sampling_period_ticks);
 		}
+
+
+		// // Read block by block until having all the samples
+		// int read_blocks = num_samples / ADXL345_FIFO_SIZE;
+		// for (size_t block = 0; block < read_blocks; block++) {
+		// 	for(size_t j = 1; j <= ADXL345_FIFO_SIZE; j++) {
+		// 		adxl345_read_data(&value);
+		//
+		// 		cur_data_x[j*block] = value.x;
+		// 		cur_data_y[j*block] = value.y;
+		// 		cur_data_z[j*block] = value.z;
+		//
+		// 	}
+		// 	// Wait until fifo is full again
+		// 	vTaskDelay(fifo_fill_time_ticks);
+		// }
 
 		active_slot = (active_slot + 1) % 2;
 

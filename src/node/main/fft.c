@@ -97,7 +97,8 @@ esp_err_t n_fft_execute(float *input, float *output) {
 #endif
 
 	for (int i = 0 ; i < fft_size; i++) {
-		buffer[i].re = input[i] * window[i];
+		// buffer[i].re = input[i] * window[i];
+		buffer[i].re = input[i];
 		buffer[i].im = 0;
 	}
 
@@ -113,11 +114,11 @@ esp_err_t n_fft_execute(float *input, float *output) {
 		return result;
 	}
 
-	result = dsps_cplx2reC_fc32((float *)(buffer), fft_size);
-	if (result != ESP_OK) {
-		ESP_LOGE(TAG, "dsps_cplx2reC_fc32");
-		return result;
-	}
+	// result = dsps_cplx2reC_fc32((float *)(buffer), fft_size);
+	// if (result != ESP_OK) {
+	// 	ESP_LOGE(TAG, "dsps_cplx2reC_fc32");
+	// 	return result;
+	// }
 
 	for (int i = 0; i < (fft_size / 2); i++) {
 		float abs = C_ABS(buffer[i].re, buffer[i].im);

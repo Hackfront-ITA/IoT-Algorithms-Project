@@ -29,6 +29,8 @@ void task_data_process(task_args_t *task_args) {
 	size_t num_samples = task_args->num_samples;
 	float sampling_freq = task_args->sampling_freq;
 
+	int outliers_tresh = 3;
+
 	while (1) {
 		vTaskSuspend(NULL);
 
@@ -43,12 +45,21 @@ void task_data_process(task_args_t *task_args) {
 		float *cur_data_z = &accel_data_z[active_slot * 3 * num_samples];
 
 		ESP_LOGI(TAG, "Processing axis data X");
+		// View input data
 		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
 			dsps_view(cur_data_x, DATA_NUM_SAMPLES, 128, 10, -15, +15, '#');
 		}
 
+		// Compute fft and view data
 		ESP_ERROR_CHECK(n_fft_execute(cur_data_x, fft_data));
 		process_axis_data(fft_data, 'x', sampling_freq);
+
+		n_fft_compute_z_score(fft_data, fft_data);
+		for(int i = 0; i < num_samples/2; i++) {
+			if (fft_data[i] > outliers_tresh) {
+				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, fft_data[i]);
+			}
+		}
 
 		ESP_LOGI(TAG, "Processing axis data Y");
 		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
@@ -58,6 +69,13 @@ void task_data_process(task_args_t *task_args) {
 		ESP_ERROR_CHECK(n_fft_execute(cur_data_y, fft_data));
 		process_axis_data(fft_data, 'y', sampling_freq);
 
+		n_fft_compute_z_score(fft_data, fft_data);
+		for(int i = 0; i < num_samples/2; i++) {
+			if (fft_data[i] > outliers_tresh) {
+				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, fft_data[i]);
+			}
+		}
+
 		ESP_LOGI(TAG, "Processing axis data Z");
 		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
 			dsps_view(cur_data_z, DATA_NUM_SAMPLES, 128, 10, -15, +15, '#');
@@ -66,28 +84,10 @@ void task_data_process(task_args_t *task_args) {
 		ESP_ERROR_CHECK(n_fft_execute(cur_data_z, fft_data));
 		process_axis_data(fft_data, 'z', sampling_freq);
 
-		//Getting outliers
-		ESP_LOGI(TAG, "Outliers on X");
-		n_fft_compute_z_score(cur_data_x, cur_data_x);
+		n_fft_compute_z_score(fft_data, fft_data);
 		for(int i = 0; i < num_samples/2; i++) {
-			if (cur_data_x[i] > 3) {
-				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, cur_data_x[i]);
-			}
-		}
-
-		ESP_LOGI(TAG, "Outliers on Y");
-		n_fft_compute_z_score(cur_data_y, cur_data_y);
-		for(int i = 0; i < num_samples/2; i++) {
-			if (cur_data_y[i] > 3) {
-				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, cur_data_y[i]);
-			}
-		}
-
-		ESP_LOGI(TAG, "Outliers on Z");
-		n_fft_compute_z_score(cur_data_z, cur_data_z);
-		for(int i = 0; i < num_samples/2; i++) {
-			if (cur_data_z[i] > 3) {
-				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, cur_data_z[i]);
+			if (fft_data[i] > outliers_tresh) {
+				printf("%d @ %f: %f\n", i, i * sampling_freq/num_samples, fft_data[i]);
 			}
 		}
 
