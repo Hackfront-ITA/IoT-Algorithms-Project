@@ -44,7 +44,7 @@ void task_message_relay(task_args_t *task_args) {
 			case C_PKT_EVENT:
 				if (c_mqtt_connected) {
 					snprintf(m_topic, sizeof(m_topic),
-						"/buildings/" S_ESCAPE(BUILDING_ID) "/point/%d/event",
+						"/buildings/" S_STRINGIFY(BUILDING_ID) "/points/%d/event",
 						point_id
 					);
 

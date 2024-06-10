@@ -40,7 +40,7 @@ def mqtt_on_messsage(client, userdata, msg):
 	payload = msg.payload.decode()
 	print(f'[MQTT] {msg.topic}: {payload}')
 
-	re_res = search('^/buildings/([0-9].*)/point/([0-9].*)/event$', topic)
+	re_res = search('^/buildings/([0-9].*)/points/([0-9].*)/event$', topic)
 	if re_res:
 		building_id = re_res.group(1)
 		point_id = re_res.group(2)

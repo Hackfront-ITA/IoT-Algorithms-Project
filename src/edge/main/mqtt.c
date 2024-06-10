@@ -89,7 +89,7 @@ static void c_mqtt_on_connect(void *handler_args,
 
 	c_mqtt_connected = true;
 
-	c_mqtt_publish("/buildings/" S_ESCAPE(BUILDING_ID) "/controller", "BOOTED");
+	c_mqtt_publish("/buildings/" S_STRINGIFY(BUILDING_ID) "/controller", "BOOTED");
 	ESP_LOGI(TAG, "Sent alive message");
 };
 
