@@ -28,17 +28,17 @@ void task_time_sync(task_args_t *task_args) {
 
 		err = c_proto_receive(&dev_id, &type, &epoch, NULL);
 		if (err != ESP_OK) {
-			ESP_LOGW(TAG, "Cannot parse packet");
+			// ESP_LOGW(TAG, "Cannot parse packet");
 			continue;
 		}
 
 		if (dev_id != EDGE_DEV_ID) {
-			ESP_LOGI(TAG, "Packet not from edge server, dev_id = %hu", dev_id);
+			ESP_LOGW(TAG, "Packet not from edge server, dev_id = %04x", dev_id);
 			continue;
 		}
 
 		if (type != C_PKT_TIMESYNC) {
-			ESP_LOGI(TAG, "Ignoring packet, type = %u", type);
+			ESP_LOGW(TAG, "Ignoring packet, type = %u", type);
 			continue;
 		}
 
