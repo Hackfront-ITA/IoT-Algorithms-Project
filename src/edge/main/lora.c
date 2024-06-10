@@ -8,7 +8,7 @@
 #include "lora.h"
 
 // Standard frequencies: 169 MHz, 433 MHz, 470 MHz, 866 MHz, 915 MHz
-#define C_LORA_FREQUENCY     866000000
+#define C_LORA_FREQUENCY     868300000
 
 // In dBm
 #define C_LORA_TX_POWER      22
