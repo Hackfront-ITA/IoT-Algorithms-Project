@@ -1,11 +1,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <esp_dsp.h>
 #include <esp_log.h>
 
 #include "tasks/tasks.h"
-#include "adxl345.h"
 #include "config.h"
 #include "lora.h"
 #include "protocol.h"
@@ -27,12 +25,12 @@ void task_time_sync(task_args_t *task_args) {
 			continue;
 		}
 
-		err = c_proto_send(C_PKT_TIMESYNC, NULL, 0, true);
+		err = c_proto_send(C_PKT_TIMESYNC, NULL, 0, false);
 		if (err != ESP_OK) {
 			ESP_LOGE(TAG, "Cannot send packet");
 			continue;
 		}
 
-		ESP_LOGI(TAG, "Sent time sync signal, epoch = %lu", epoch);
+		ESP_LOGI(TAG, "Sent signal, epoch = %lu", epoch);
 	}
 }
