@@ -74,6 +74,7 @@ esp_err_t c_lora_send(uint8_t *data, size_t len, bool async) {
 
 	if (!result) {
 		ESP_LOGE(TAG, "Error in ra01s_send()");
+		xSemaphoreGive(c_lora_busy);
 		return ESP_FAIL;
 	}
 
