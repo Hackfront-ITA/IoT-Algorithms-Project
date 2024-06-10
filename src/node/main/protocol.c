@@ -70,7 +70,9 @@ esp_err_t c_proto_receive(uint16_t *dev_id, c_pkt_type_t *type, uint32_t *epoch,
 	*type = rx_header->type;
 	*epoch = rx_header->epoch;
 
-	memcpy(payload, rx_payload, rsize - sizeof(c_pkt_header_t));
+	if (payload != NULL) {
+		memcpy(payload, rx_payload, rsize - sizeof(c_pkt_header_t));
+	}
 
 	return ESP_OK;
 }
