@@ -23,13 +23,15 @@ void task_message_relay(task_args_t *task_args) {
 	uint32_t epoch;
 
 	while (1) {
+		vTaskDelay(1);
+
 		if (!c_lora_initialized) {
-			return;
+			continue;
 		}
 
 		err = c_proto_receive(&dev_id, &type, &epoch, (uint8_t *)(&pkt_payload));
 		if (err != ESP_OK) {
-			ESP_LOGW(TAG, "Cannot parse packet");
+			// ESP_LOGW(TAG, "Cannot parse packet");
 			continue;
 		}
 
@@ -49,8 +51,13 @@ void task_message_relay(task_args_t *task_args) {
 					);
 
 					snprintf(m_payload, sizeof(m_payload),
-						S_ESCAPE({"axis": "%c", "frequency": "%.05f", "value": "%.05f"}),
-						pkt_payload.event.axis, pkt_payload.event.frequency,
+						S_ESCAPE({
+							"epoch": "%lu",
+							"axis": "%c",
+							"frequency": "%.05f",
+							"value": "%.05f"
+						}),
+						epoch, pkt_payload.event.axis, pkt_payload.event.frequency,
 						pkt_payload.event.value
 					);
 
@@ -60,8 +67,6 @@ void task_message_relay(task_args_t *task_args) {
 			default:
 				break;
 		}
-
-		vTaskDelay(1);
 	}
 
 	return;
