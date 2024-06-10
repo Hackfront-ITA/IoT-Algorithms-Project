@@ -60,8 +60,8 @@ esp_err_t adxl345_init(void) {
 	}
 
 	// Set up FIFO in stream mode, useful for higher sampling frequencies
-	// uint8_t fifo_ctl_val = 0x80; // stream mode
-	uint8_t fifo_ctl_val = 0x00; // fifo off
+	uint8_t fifo_ctl_val = 0x80; // stream mode
+	// uint8_t fifo_ctl_val = 0x00; // fifo off
 	ret = n_i2c_write(acc_handle, ADXL345_REG_FIFO_CTL , &fifo_ctl_val, sizeof(uint8_t), -1);
 	if (ret != ESP_OK) {
 		ESP_LOGE(TAG, "Cannot write to FIFO_CTL register");
