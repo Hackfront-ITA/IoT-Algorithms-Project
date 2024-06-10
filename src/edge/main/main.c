@@ -43,7 +43,8 @@ void app_main(void) {
 
 	ESP_LOGI(TAG, "Create message relay task");
 	xTaskCreate((TaskFunction_t)(task_message_relay), "Message relay task",
-		N_TASK_STACK_SIZE, &task_args, 10, &th_message_relay);
+		N_TASK_STACK_SIZE, &task_args, 20, &th_message_relay);
+
 	ESP_LOGI(TAG, "Create time sync task");
 	xTaskCreate((TaskFunction_t)(task_time_sync), "Time sync task",
 		N_TASK_STACK_SIZE, &task_args, 20, &th_time_sync);
