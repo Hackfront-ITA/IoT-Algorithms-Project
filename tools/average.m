@@ -10,4 +10,5 @@ si = (start * Fs) + 1;
 x = x(si:end);
 
 m = mean(x);
-print(m);
+printf('%.02f\n', m);
+

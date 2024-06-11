@@ -14,7 +14,7 @@ p = plot(t, x);
 xlabel('time (s)');
 ylabel('power (mW)');
 
-axis([20, 21, 0, 600]);
+axis([0, 60, 150, 700]);
 drawnow;
 
 plotfile = strrep(filename, '.', '_');
