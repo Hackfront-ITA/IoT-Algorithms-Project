@@ -15,7 +15,7 @@
 #include "protocol.h"
 #include "utils.h"
 
-#define DP_ENABLE_TIMING  1
+#define DP_ENABLE_TIMING  0
 #define OUTLIERS_THRESH   3
 
 static const char *TAG = "Task data process";
@@ -99,36 +99,24 @@ static void process_axis_data(float *cur_data, char axis, float sampling_freq,
 		dsps_view(z_data, num_samples / 2, 128, 9, -4, +4, '=');
 	}
 
-	// for (int i = 0; i < num_samples / 2; i++) {
-	// 	if (z_data[i] > OUTLIERS_THRESH) {
-	// 		c_pkt_event_t event = {
-	// 			.frequency = i * sampling_freq / num_samples,
-	// 			.value = fft_data[i],
-	// 			.axis = axis
-	// 		};
-
-	// 		printf("%3d -> %.3f: %.3f\n", i, event.frequency, event.value);
-
-	// 		if (c_lora_initialized) {
-	// 			c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t), false);
-	// 		}
-	// 	}
-
 	// Collapse group of adjacent outliers to median value. This is an attempt to reduce
 	// the number of packages sent
 	for (int i = 0; i < num_samples / 2; i++) {
 
 		if (z_data[i] > OUTLIERS_THRESH) {
 
-			int head_index = i;
-			int median_index;
+			size_t head_index = i;
+			size_t median_index;
 
 			// If adjacent index is an outlier go forward until last occurrence
-			while(z_data[i+1] > OUTLIERS_TRESH) {
+			while (
+				((i + 1) < (num_samples / 2)) &&
+				(z_data[i + 1] > OUTLIERS_THRESH)
+			) {
 				i++;
 			}
 
-			median_index = (i - head_index) / 2;
+			median_index = (i + head_index) / 2;
 
 			c_pkt_event_t event = {
 				.frequency = median_index * sampling_freq / num_samples,
@@ -137,7 +125,7 @@ static void process_axis_data(float *cur_data, char axis, float sampling_freq,
 			};
 
 #if DP_ENABLE_TIMING != 1
-			ESP_LOGI(TAG, "%3d -> %.3f: %.3f\n", i, event.frequency, event.value);
+			ESP_LOGI(TAG, "Outlier %3d -> %.3f: %.3f", i, event.frequency, event.value);
 #endif
 
 			if (c_lora_initialized) {
