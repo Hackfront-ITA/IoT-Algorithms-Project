@@ -6,15 +6,24 @@
 
 ## Components
 
-- [Accelerometer](#accelerometer)
-- [LoRa module](#lora-module)
-- [Battery](#battery)
-- [Solar panel](#solar-panel)
+- [Nodes](#nodes), attached to critical points of the infrastructure to monitor
+- [Controller](#controller), an edge device to aggregate data received from nodes, one for each infrastructure (eg. bridge)
+- [Cloud system](#cloud-system), to store events received from the controllers and send alerts
 
-### Accelerometer
+### Nodes
 
-### LoRa module
+- Accelerometer
+- LoRa module
+- Battery
+- Solar panel
 
-### Battery
+### Controller
 
-### Solar panel
+- LoRa module
+- Wi-Fi module
+
+### Cloud system
+
+- MQTT broker
+- Database
+- Listener service
