@@ -17,4 +17,11 @@ database for long-term storage and analysis.
 - Emanuele Roccia -- 1967318
 
 ### Documents
+- [Concept](./docs/concept.md)
+- [Technology](./docs/technology.md)
+- [Evaluation](./docs/evaluation.md)
+
+### Presentations
+- [Final delivery](./docs/presentations/final-delivery.pdf)
+- [Second delivery](./docs/presentations/second-delivery.pdf)
 - [First delivery](./docs/presentations/first-delivery.pdf)
