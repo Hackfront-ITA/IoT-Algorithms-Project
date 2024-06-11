@@ -99,11 +99,40 @@ static void process_axis_data(float *cur_data, char axis, float sampling_freq,
 		dsps_view(z_data, num_samples / 2, 128, 9, -4, +4, '=');
 	}
 
+	// for (int i = 0; i < num_samples / 2; i++) {
+	// 	if (z_data[i] > OUTLIERS_THRESH) {
+	// 		c_pkt_event_t event = {
+	// 			.frequency = i * sampling_freq / num_samples,
+	// 			.value = fft_data[i],
+	// 			.axis = axis
+	// 		};
+
+	// 		printf("%3d -> %.3f: %.3f\n", i, event.frequency, event.value);
+
+	// 		if (c_lora_initialized) {
+	// 			c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t), false);
+	// 		}
+	// 	}
+
+	// Collapse group of adjacent outliers to median value. This is an attempt to reduce
+	// the number of packages sent
 	for (int i = 0; i < num_samples / 2; i++) {
+
 		if (z_data[i] > OUTLIERS_THRESH) {
+
+			int head_index = i;
+			int median_index;
+
+			// If adjacent index is an outlier go forward until last occurrence
+			while(z_data[i+1] > OUTLIERS_TRESH) {
+				i++;
+			}
+
+			median_index = (i - head_index) / 2;
+
 			c_pkt_event_t event = {
-				.frequency = i * sampling_freq / num_samples,
-				.value = fft_data[i],
+				.frequency = median_index * sampling_freq / num_samples,
+				.value = fft_data[median_index],
 				.axis = axis
 			};
 
