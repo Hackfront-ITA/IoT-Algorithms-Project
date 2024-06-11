@@ -80,9 +80,6 @@ static void process_axis_data(float *cur_data, char axis, float sampling_freq,
 		dsps_view(cur_data, num_samples, 128, 10, -300, +300, '#');
 	}
 
-	// Remove mean
-	remove_mean(cur_data, num_samples);
-
 	// Compute FFT
 	ESP_ERROR_CHECK(n_fft_execute(cur_data, fft_data));
 
@@ -101,7 +98,7 @@ static void process_axis_data(float *cur_data, char axis, float sampling_freq,
 
 	// Collapse group of adjacent outliers to median value. This is an attempt to reduce
 	// the number of packages sent
-	for (size_t i = 0; i < num_samples / 2; i++) {
+	for (size_t i = 4; i < num_samples / 2; i++) {
 		if (z_data[i] <= OUTLIERS_THRESH) {
 			continue;
 		}
