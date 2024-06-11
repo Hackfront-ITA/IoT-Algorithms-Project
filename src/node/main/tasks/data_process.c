@@ -5,6 +5,7 @@
 
 #include <esp_dsp.h>
 #include <esp_log.h>
+#include <esp_timer.h>
 
 #include "tasks/tasks.h"
 #include "adxl345.h"
@@ -14,6 +15,7 @@
 #include "protocol.h"
 #include "utils.h"
 
+#define DP_ENABLE_TIMING  1
 #define OUTLIERS_THRESH   3
 
 static const char *TAG = "Task data process";
@@ -39,64 +41,61 @@ void task_data_process(task_args_t *task_args) {
 
 		ESP_LOGI(TAG, "Task data_process resumed");
 
+#if DP_ENABLE_TIMING == 1
+		int64_t start_time = esp_timer_get_time();
+#endif
+
 		if (c_lora_initialized) {
 			c_proto_send(C_PKT_HEARTBEAT, NULL, 0, false);
 		}
 
-
-		// Process axis data X
 		float *cur_data_x = &accel_data_x[active_slot * 3 * num_samples];
-
-		// View input data
-		ESP_LOGI(TAG, "Processing axis data X");
-		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
-			dsps_view(cur_data_x, num_samples, 128, 10, -300, +300, '#');
-		}
-
-		// Compute fft and view data
-		remove_mean(cur_data_x, num_samples);
-		ESP_ERROR_CHECK(n_fft_execute(cur_data_x, fft_data));
-		process_axis_data(fft_data, 'x', sampling_freq, num_samples);
-
-
-		// Process axis data Y
 		float *cur_data_y = &accel_data_y[active_slot * 3 * num_samples];
-
-		ESP_LOGI(TAG, "Processing axis data Y");
-		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
-			dsps_view(cur_data_y, num_samples, 128, 10, -300, +300, '#');
-		}
-
-		remove_mean(cur_data_y, num_samples);
-		ESP_ERROR_CHECK(n_fft_execute(cur_data_y, fft_data));
-		process_axis_data(fft_data, 'y', sampling_freq, num_samples);
-
-
-		// Process axis data Z
 		float *cur_data_z = &accel_data_z[active_slot * 3 * num_samples];
 
-		ESP_LOGI(TAG, "Processing axis data Z");
-		if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
-			dsps_view(cur_data_z, num_samples, 128, 10, -300, +300, '#');
-		}
-
-		remove_mean(cur_data_z, num_samples);
-		ESP_ERROR_CHECK(n_fft_execute(cur_data_z, fft_data));
-		process_axis_data(fft_data, 'z', sampling_freq, num_samples);
-
+		process_axis_data(cur_data_x, 'x', sampling_freq, num_samples);
+		process_axis_data(cur_data_y, 'y', sampling_freq, num_samples);
+		process_axis_data(cur_data_z, 'z', sampling_freq, num_samples);
 
 		active_slot = (active_slot + 1) % 2;
+
+#if DP_ENABLE_TIMING == 1
+		int64_t end_time = esp_timer_get_time();
+		int64_t time_delta_d = end_time - start_time;
+		float time_delta_f = time_delta_d / 1000.0;
+
+		ESP_LOGI(TAG, "Iteration took %.03f ms", time_delta_f);
+#endif
 	}
 }
 
-static void process_axis_data(float *fft_data, char axis, float sampling_freq, size_t num_samples) {
-	if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
+static void process_axis_data(float *cur_data, char axis, float sampling_freq,
+		size_t num_samples)
+{
+	// View input data
+#if DP_ENABLE_TIMING != 1
+	ESP_LOGI(TAG, "Processing axis data %c", axis);
+#endif
+	if (!DP_ENABLE_TIMING && esp_log_level_get(TAG) == ESP_LOG_INFO) {
+		dsps_view(cur_data, num_samples, 128, 10, -300, +300, '#');
+	}
+
+	// Remove mean
+	remove_mean(cur_data, num_samples);
+
+	// Compute FFT
+	ESP_ERROR_CHECK(n_fft_execute(cur_data, fft_data));
+
+	// View FFT data
+	if (!DP_ENABLE_TIMING && esp_log_level_get(TAG) == ESP_LOG_INFO) {
 		dsps_view(fft_data, num_samples / 2, 128, 10, 0, +100, '*');
 	}
 
+	// Compute z-score
 	calc_z_score(fft_data, z_data, num_samples / 2);
 
-	if (esp_log_level_get(TAG) == ESP_LOG_INFO) {
+	// View z-score data
+	if (!DP_ENABLE_TIMING && esp_log_level_get(TAG) == ESP_LOG_INFO) {
 		dsps_view(z_data, num_samples / 2, 128, 9, -4, +4, '=');
 	}
 
@@ -108,10 +107,24 @@ static void process_axis_data(float *fft_data, char axis, float sampling_freq, s
 				.axis = axis
 			};
 
-			printf("%3d -> %.3f: %.3f\n", i, event.frequency, event.value);
+#if DP_ENABLE_TIMING != 1
+			ESP_LOGI(TAG, "%3d -> %.3f: %.3f\n", i, event.frequency, event.value);
+#endif
 
 			if (c_lora_initialized) {
-				c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t), false);
+#if DP_ENABLE_TIMING == 1
+				int64_t start_time = esp_timer_get_time();
+#endif
+				c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t),
+					false);
+
+#if DP_ENABLE_TIMING == 1
+				int64_t end_time = esp_timer_get_time();
+				int64_t time_delta_d = end_time - start_time;
+				float time_delta_f = time_delta_d / 1000.0;
+
+				ESP_LOGI(TAG, "Message sending took %.03f ms", time_delta_f);
+#endif
 			}
 		}
 	}
