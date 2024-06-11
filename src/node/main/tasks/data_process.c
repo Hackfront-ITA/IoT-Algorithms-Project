@@ -101,48 +101,48 @@ static void process_axis_data(float *cur_data, char axis, float sampling_freq,
 
 	// Collapse group of adjacent outliers to median value. This is an attempt to reduce
 	// the number of packages sent
-	for (int i = 0; i < num_samples / 2; i++) {
+	for (size_t i = 0; i < num_samples / 2; i++) {
+		if (z_data[i] <= OUTLIERS_THRESH) {
+			continue;
+		}
 
-		if (z_data[i] > OUTLIERS_THRESH) {
+		size_t head_index = i;
+		size_t median_index;
 
-			size_t head_index = i;
-			size_t median_index;
+		// If adjacent index is an outlier go forward until last occurrence
+		while (
+			((i + 1) < (num_samples / 2)) &&
+			(z_data[i + 1] > OUTLIERS_THRESH)
+		) {
+			i++;
+		}
 
-			// If adjacent index is an outlier go forward until last occurrence
-			while (
-				((i + 1) < (num_samples / 2)) &&
-				(z_data[i + 1] > OUTLIERS_THRESH)
-			) {
-				i++;
-			}
+		median_index = (i + head_index) / 2;
 
-			median_index = (i + head_index) / 2;
-
-			c_pkt_event_t event = {
-				.frequency = median_index * sampling_freq / num_samples,
-				.value = fft_data[median_index],
-				.axis = axis
-			};
+		c_pkt_event_t event = {
+			.frequency = median_index * sampling_freq / num_samples,
+			.value = fft_data[median_index],
+			.axis = axis
+		};
 
 #if DP_ENABLE_TIMING != 1
-			ESP_LOGI(TAG, "Outlier %3d -> %.3f: %.3f", i, event.frequency, event.value);
+		ESP_LOGI(TAG, "Outlier %3d -> %.3f: %.3f", i, event.frequency, event.value);
 #endif
 
-			if (c_lora_initialized) {
+		if (c_lora_initialized) {
 #if DP_ENABLE_TIMING == 1
-				int64_t start_time = esp_timer_get_time();
+			int64_t start_time = esp_timer_get_time();
 #endif
-				c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t),
-					false);
+			c_proto_send(C_PKT_EVENT, (uint8_t *)(&event), sizeof(c_pkt_event_t),
+				false);
 
 #if DP_ENABLE_TIMING == 1
-				int64_t end_time = esp_timer_get_time();
-				int64_t time_delta_d = end_time - start_time;
-				float time_delta_f = time_delta_d / 1000.0;
+			int64_t end_time = esp_timer_get_time();
+			int64_t time_delta_d = end_time - start_time;
+			float time_delta_f = time_delta_d / 1000.0;
 
-				ESP_LOGI(TAG, "Message sending took %.03f ms", time_delta_f);
+			ESP_LOGI(TAG, "Message sending took %.03f ms", time_delta_f);
 #endif
-			}
 		}
 	}
 }
