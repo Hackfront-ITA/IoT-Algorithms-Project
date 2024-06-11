@@ -1,4 +1,3 @@
-#include <math.h>
 #include <string.h>
 
 #include <esp_err.h>
@@ -82,5 +81,13 @@ void c_proto_set_epoch(uint32_t new_epoch) {
 }
 
 bool c_proto_is_valid_epoch(uint32_t epoch) {
-	return abs(cur_epoch - epoch) < VALID_EPOCH_WINDOW;
+	uint32_t diff;
+
+	if (cur_epoch > epoch) {
+		diff = cur_epoch - epoch;
+	} else {
+		diff = epoch - cur_epoch;
+	}
+
+	return diff < VALID_EPOCH_WINDOW;
 }
