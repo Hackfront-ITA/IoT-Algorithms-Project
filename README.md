@@ -17,4 +17,4 @@ database for long-term storage and analysis.
 - Emanuele Roccia -- 1967318
 
 ### Documents
-- [First delivery](./docs/first-delivery.pdf)
+- [First delivery](./docs/presentations/first-delivery.pdf)
