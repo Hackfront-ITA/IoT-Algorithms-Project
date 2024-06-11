@@ -56,8 +56,6 @@ esp_err_t c_mqtt_start(void) {
 		MQTT_EVENT_DISCONNECTED, c_mqtt_on_disconnect,  NULL);
 	esp_mqtt_client_register_event(c_client,
 		MQTT_EVENT_ERROR,        c_mqtt_on_error,       NULL);
-	esp_mqtt_client_register_event(c_client,
-		MQTT_EVENT_DATA,         c_mqtt_on_data,        NULL);
 
 	esp_mqtt_client_start(c_client);
 
@@ -118,15 +116,4 @@ static void c_mqtt_on_error(void *handler_args,
 	//
 	//   ESP_LOGI(TAG, "Last errno string (%s)", strerror(event->error_handle->esp_transport_sock_errno));
 	// }
-};
-
-static void c_mqtt_on_data(void *handler_args,
-		esp_event_base_t base, int32_t event_id, void *event_data)
-{
-  esp_mqtt_event_handle_t event = event_data;
-  esp_mqtt_client_handle_t client = event->client;
-
-  ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-  printf("  TOPIC=%.*s\r\n", event->topic_len, event->topic);
-  printf("  DATA=%.*s\r\n", event->data_len, event->data);
 };
