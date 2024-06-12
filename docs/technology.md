@@ -46,6 +46,28 @@ CS to 3.3V is needed to put the accelerometer in I2C mode, as it can use either 
 
 SDO to GND is needed to signal the accelerometer to use the main I2C address (0xE5).
 
+#### Battery
+
+The Heltec board provides also a voltage regulator and a BMS (battery management system) with a dedicated 2-pin connector for a Li-Ion/Li-Po battery.
+
+This allows the board to operate in the absence of an external power source until the battery runs out.
+When the power source is restored, the BMS transparently begins recharging the battery until it is fully charged, and then stops drawing current.
+
+This setup is ideal for our scenario, where a solar panel is used to power the node, but in the absence of sun, the battery should continue to provide power.
+
+Connections:
+
+- The battery is connected to the specific connector on the Heltec board
+- The solar panel output (+/-) is connected to 5V/GND of the Heltec board
+
+### Controller
+
+Each controller is composed of:
+
+- Heltec LoRa V3 board
+- [LoRa module](#lora-module)
+- Wi-Fi module
+
 #### LoRa module
 
 LoRa module is the Semtech SX1262. It is provided by the Heltec board and is internally connected to SPI2 bus.
@@ -60,10 +82,7 @@ The connections to use are the following:
 | RST     | GPIO 12 |
 | BUSY    | GPIO 13 |
 
-### Controller
-
-- LoRa module
-- Wi-Fi module
+LoRa parameters (spreading factor, bandwidth, coding rate) are adjusted to meet range requirements (at least 100m). This is explained in detail in the section [LoRa parameters](./evaluation.md#lora-parameters) section of the evaluation document.
 
 ### Cloud system
 
