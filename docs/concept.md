@@ -36,5 +36,4 @@ they could also be used to check for dangerous vibrations and movement for the s
 of the users of the structure.
 
 For further technical details please check the [technology](./technology.md) and [evaluation](./evaluation.md)
-documentd.
-
+documents.

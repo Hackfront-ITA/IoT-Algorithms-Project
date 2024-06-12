@@ -22,10 +22,19 @@ The code used by the Arduino is at [src/measurement/src/measurement.ino](../src/
 
 ![Power graph](../res/measurements/consumption-complete.png "Power graph")
 
+The energy measurement are measured in the following conditions:
+- Device ON: the device just executes the Main task that performs nothing, remaining on.
+- Processing: the device only uses I2C to communicate with the accelerometer and performs fft, finding outliers
+- LoRa ON: the whole code is executed. The device is kept still, so it only sends heartbeat packets through LoRa
+- Under load: the device is moved, so data about outliers is sent through LoRa
+
+In these graphs we can clearly see that there are significant spikes in energy consumption every 10 seconds.
+This is the data_processing tasks that performs most of the computation and that is responsible of sending data
+through LoRa. More details in the section [task timing](#task-timing)
 
 ### Energy harvesting
 
-Based on the previous section, the average power consumption is 326 mW.
+Based on the previous section, the average power consumption under load is 326 mW.
 
 In order to ensure the system can operate on battery power for an entire day, we need to calculate the battery capacity:
 
@@ -46,7 +55,8 @@ A solar panel like [this one](https://www.amazon.it/dp/B09JFYPDNC) on Amazon, ra
 
 The time-critical parts of the node firmware are the data_collect and data_process tasks.
 
-The data_collect task fills a array containing 10 seconds worth of samples. Once finished, it wakes up the data_process task, which takes the filled array, processes the data and sends the results via LoRa.
+The data_collect task fills a array containing 10 seconds worth of samples (2048 samples, 200Hz sampling frequency).
+Once finished, it wakes up the data_process task, which takes the filled array, processes the data and sends the results via LoRa.
 
 The data_collect task does not wait the completion of data_process task, otherwise the samples could be lost, so it starts a new sampling window in another *slot* of the data array.
 
@@ -54,12 +64,12 @@ As there are two slots, the data_process task has to release the old slot before
 
 It is critical that an iteration of the data_process task takes less than an iteration of the data_collect task.
 
-A measurement is done to avoid this scenario. With `esp_timer_get_time()` function, we measured the time taken by an iteration of data_process task.
+We measured the time taken by one iteration of data_process, for ensuring that such scenario doesn't happen. We performed this measurement using the `esp_timer_get_time()` function.
 
 The calculation part of the task has a fixed duration, on average 48 ms.
 For each event sent via LoRa, additional 75.5 ms are spent, which is roughly the airtime of the packet.
 
-With a sampling window duration of 10 seconds, the maximum number of packets sent is:
+With a sampling window duration of 10 seconds, the maximum number of packets that can be sent without exceeding the time slot limit is:
 
 $$n_{pkt} = \frac{10000 ms - 48 ms}{75.5 ms} = 131 $$
 
@@ -67,7 +77,7 @@ which is a lot more than we need, so there is no timing issue between tasks.
 
 ### Time sync
 
-As our node network is distributed, a method to sync events that happen concurrently is needed.
+As our node network is distributed, a method to sync events is needed.
 
 It can happen that a node has just finished doing FFT + z-score calculation but another node just started sampling.
 
@@ -95,6 +105,14 @@ For example, a vibration at 12.7 Hz can result in 4 different events: 12.71 Hz, 
 To mitigate this issue, we implemented a basic clustering algorithm for neighboring outliers. It simply finds contiguous elements of the FFT output array which are outliers and sends only one packet for the median frequency.
 
 Conversely, a low $n_{samples}$ leads to a $T_{window}$ too small, so an event which continues for multiple sampling windows results in more packets sent for the same frequency.
+
+### Accuracy of data
+
+We have performed a rough test on the accuracy of the data sent by the device, placing it on top of a
+speaker and playing sound waves, ranging from 35Hz to 100Hz.
+
+The accuracy of the data send, even considering the aggregation, seems to have roughly an error of $\pm 0,1 Hz$.
+However, from 90 Hz upwards the accuracy decreases.
 
 ### LoRa parameters
 

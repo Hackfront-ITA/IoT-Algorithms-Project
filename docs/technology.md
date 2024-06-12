@@ -6,9 +6,9 @@
 
 ## Components
 
-- [Nodes](#nodes), attached to critical points of the infrastructure to monitor
+- [Nodes](#nodes), attached to critical points of the infrastructure to monitor vibrations
 - [Controller](#controller), an edge device to aggregate data received from nodes, one for each infrastructure (eg. bridge)
-- [Cloud system](#cloud-system), to store events received from the controllers and send alerts
+- [Cloud system](#cloud-system), to store events received from the controllers and potentially send alerts
 
 ### Nodes
 
@@ -16,21 +16,21 @@ Each node is composed of:
 
 - Heltec LoRa V3 board
 - [Accelerometer](#accelerometer)
-- [LoRa module](#lora-module)
+- [LoRa module](#lora-module) (integrated on the Heltec board)
 - [Battery](#battery)
 - Solar panel
 
 Each node samples the three axes of an accelerometer at a rate of 200 Hz, sufficient to capture vibrations at a maximum of 100 Hz (Nyquist frequency).
-After collecting a window of samples (eg. 10 s), some calculations are done for each axis:
+After collecting samples over a time window (eg. 10 s), some calculations are done for each axis:
 
 - FFT to extract frequency components
 - Z-score to find outliers
-- Clustering for neighboring values
+- Clustering for neighboring values, reducing the number of lora packets to send.
 
 Then, resulting values are sent to the [controller](#controller) via LoRa radio.
 
-The nodes are power-constrained as they have to be autonomous from the point of view of energy harvesting, so a solar panel is needed.
-Also, a battery is necessary to provide power also in periods of darkness.
+The nodes have to be autonomous from the point of view of energy, so they perform energy harvesting using a solar panel.
+Also, a battery is necessary to provide power in periods of darkness.
 
 #### Accelerometer
 
@@ -79,7 +79,7 @@ Each controller is composed of:
 
 The controller essentially has two functions:
 
-- Listens the LoRa channel for incoming messages from nodes and relays them to the cloud server via MQTT
+- Listens the LoRa channel for incoming messages from nodes and relays them to the cloud server via MQTT over WiFi
 - Sends a periodic time sync signal to all nodes, explained in the [time sync](./evaluation.md#time-sync) section of the evaluation document
 
 Optionally, a data aggregation logic can be implemented on the controller, to generate higher level events to be sent to the cloud.
@@ -98,7 +98,8 @@ The connections to use are the following:
 | RST     | GPIO 12 |
 | BUSY    | GPIO 13 |
 
-LoRa parameters (spreading factor, bandwidth, coding rate) are adjusted to meet range requirements (at least 100m). This is explained in detail in the section [LoRa parameters](./evaluation.md#lora-parameters) section of the evaluation document.
+LoRa parameters (spreading factor, bandwidth, coding rate) are adjusted to meet range requirements (at least 100m).
+This is explained in detail in the [LoRa parameters section of the evaluation document](./evaluation.md#lora-parameters).
 
 ### Cloud system
 
