@@ -3,9 +3,10 @@
 ## Contents
 - [Power consumption](#energy-consumption)
 - [Energy harvesting](#energy-harvesting)
-- [LoRa parameters](#lora-parameters)
 - [Task timing](#task-timing)
 - [Time sync](#time-sync)
+- [Sampling parameters](#sampling-parameters)
+- [LoRa parameters](#lora-parameters)
 
 ### Power consumption
 
@@ -64,6 +65,24 @@ When each node transmits an event packet, it attaches an *epoch* value.
 This value is managed by the controller, which increments it and broadcasts via LoRa to all the nodes the new epoch each 20 seconds, which is double of the sampling window.
 
 This ensures that the values are aggregated inside a window of 20 seconds, which is less than the minute of end-to-end latency requirement stated before.
+
+### Sampling parameters
+
+Our application requires sampling at least at $F_s = 200 Hz$ to capture the desired range of frequencies, which is 0-100 Hz.
+
+The sampling window duration is calculated as follows:
+
+$$T_{window} = \frac{n_{samples}}{F_s}$$
+
+So, fixed the sampling frequency, the only variable parameter is the number of samples. $n_{samples}$ defines also the FFT output size, which is exactly half of it.
+
+Having an FFT result array too big can lead to multiple outliers detected by  the data_process task, as they all relate to the same frequency.
+
+For example, a vibration at 12.7 Hz can result in 4 different events: 12.71 Hz, 12.73 Hz, 12.75 Hz, 12.77 Hz.
+
+To mitigate this issue, we implemented a basic clustering algorithm for neighboring outliers. It simply finds contiguous elements of the FFT output array which are outliers and sends only one packet for the median frequency.
+
+Conversely, a low $n_{samples}$ leads to a $T_{window}$ too small, so an event which continues for multiple sampling windows results in more packets sent for the same frequency.
 
 ### LoRa parameters
 
