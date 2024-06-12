@@ -66,4 +66,22 @@ This value is managed by the controller, which increments it and broadcasts via 
 This ensures that the values are aggregated inside a window of 20 seconds, which is less than the minute of end-to-end latency requirement stated before.
 
 ### LoRa parameters
-We used a tool ([LoRaTools air time calculator](https://www.loratools.nl/#/airtime)) to estimate time on air and [this guide](https://medium.com/home-wireless/testing-lora-radios-with-the-limesdr-mini-part-2-37fa481217ff).
+
+For our purpose, the LoRa communication should be optimized to prefer reliability and range over bandwidth.
+
+LoRa has three main parameters: spreading factor, bandwidth and coding rate.
+Tuning all of them is a matter of tradeoffs (eg. airtime vs link budget) and we used [this guide](https://medium.com/home-wireless/testing-lora-radios-with-the-limesdr-mini-part-2-37fa481217ff) to get an idea.
+
+Basically:
+- Each unit increase in spreading factor doubles the time on air to transmit a symbol
+- Each unit increase in spreading factor increases link budget by almost 2.5dB
+- Each doubling of the bandwidth decreases link budget by almost 3dB
+- Increasing the coding rate increases reliability while decreasing data rate
+
+We used [LoRaTools air time calculator](https://www.loratools.nl/#/airtime) to estimate time on air given.
+
+After some experiments, we set the parameters to meet distance requirement while minimizing air time:
+
+- Spreading factor: 7
+- Bandwidth: 125 kHz
+- Coding rate: 1
