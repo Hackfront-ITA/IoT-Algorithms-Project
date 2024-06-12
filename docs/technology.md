@@ -29,6 +29,9 @@ After collecting a window of samples (eg. 20s), some calculations are done for e
 
 Then, resulting values are sent to the [controller](#controller) via LoRa radio.
 
+The nodes are power-constrained as they have to be autonomous from the point of view of energy harvesting, so a solar panel is needed.
+Also, a battery is necessary to provide power also in periods of darkness.
+
 #### Accelerometer
 
 The accelerometer is the Analog Devices ADXL345. It is connected to the Heltec board using the I2C bus:
@@ -60,6 +63,10 @@ Connections:
 - The battery is connected to the specific connector on the Heltec board
 - The solar panel output (+/-) is connected to 5V/GND of the Heltec board
 
+Specifically, each node has to function for an entire day without providing external power and the battery has to be fully charged in 6 hours of light.
+
+A battery evaluation is described in the [energy harvesting](./evaluation.md#energy-harvesting) section of the evaluation document.
+
 ### Controller
 
 Each controller is composed of:
@@ -67,6 +74,13 @@ Each controller is composed of:
 - Heltec LoRa V3 board
 - [LoRa module](#lora-module)
 - Wi-Fi module
+
+The controller essentially has two functions:
+
+- Listens the LoRa channel for incoming messages from nodes and relays them to the cloud server via MQTT
+- Sends a periodic time sync signal to all nodes, explained in the [time sync](./evaluation.md#time-sync) section of the evaluation document
+
+Optionally, a data aggregation logic can be implemented on the controller, to generate higher level events to be sent to the cloud.
 
 #### LoRa module
 
@@ -86,6 +100,19 @@ LoRa parameters (spreading factor, bandwidth, coding rate) are adjusted to meet 
 
 ### Cloud system
 
-- MQTT broker
+**Re-phrase the following paragraph:**
+
+The cloud system employs three components:
+
+- [MQTT broker](#mqtt-broker)
 - Database
 - Listener service
+
+The software stack is deployed using docker compose, to speed up the initial setup.
+In a final setup, the cloud system is managed by the manufacturer of the devices (so by us), while the nodes and the controller are managed by the company responsible for the infrastructure.
+
+#### MQTT broker
+
+Our MQTT broker is Eclipse Mosquitto.
+
+The communication with the MQTT broker is secured with MQTTS, utilizing the TLS protocol for protection. Each controller is equipped with the CA certificate, to establish the identity of the server.
