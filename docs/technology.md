@@ -21,7 +21,7 @@ Each node is composed of:
 - Solar panel
 
 Each node samples the three axes of an accelerometer at a rate of 200 Hz, sufficient to capture vibrations at a maximum of 100 Hz (Nyquist frequency).
-After collecting a window of samples (eg. 20s), some calculations are done for each axis:
+After collecting a window of samples (eg. 10 s), some calculations are done for each axis:
 
 - FFT to extract frequency components
 - Z-score to find outliers
