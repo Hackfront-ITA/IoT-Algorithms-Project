@@ -15,9 +15,9 @@
 Each node is composed of:
 
 - Heltec LoRa V3 board
-- [Accelerometer](#accelerometer) (Analog Devices ADXL345)
-- [LoRa module](#lora-module) (Semtech SX1262)
-- [Battery](#battery) (3.7V Li-Po)
+- [Accelerometer](#accelerometer)
+- [LoRa module](#lora-module)
+- [Battery](#battery)
 - Solar panel
 
 Each node samples the three axes of an accelerometer at a rate of 200 Hz, sufficient to capture vibrations at a maximum of 100 Hz (Nyquist frequency).
@@ -50,6 +50,8 @@ CS to 3.3V is needed to put the accelerometer in I2C mode, as it can use either 
 SDO to GND is needed to signal the accelerometer to use the main I2C address (0xE5).
 
 #### Battery
+
+Our battery is a standard 3.7V Li-Po battery, like the ones that are found in smartphones/tablets.
 
 The Heltec board provides also a voltage regulator and a BMS (battery management system) with a dedicated 2-pin connector for a Li-Ion/Li-Po battery.
 
@@ -100,19 +102,29 @@ LoRa parameters (spreading factor, bandwidth, coding rate) are adjusted to meet 
 
 ### Cloud system
 
-**Re-phrase the following paragraph:**
-
 The cloud system employs three components:
 
 - [MQTT broker](#mqtt-broker)
 - Database
-- Listener service
+- [Listener service](#listener-service)
 
-The software stack is deployed using docker compose, to speed up the initial setup.
+The software stack is deployed using `docker compose`, to speed up the initial setup.
 In a final setup, the cloud system is managed by the manufacturer of the devices (so by us), while the nodes and the controller are managed by the company responsible for the infrastructure.
+
+To initialize and bring up the entire cloud system:
+```sh
+cd src/cloud
+docker compose up -d
+```
 
 #### MQTT broker
 
 Our MQTT broker is Eclipse Mosquitto.
 
 The communication with the MQTT broker is secured with MQTTS, utilizing the TLS protocol for protection. Each controller is equipped with the CA certificate, to establish the identity of the server.
+
+#### Listener service
+
+The listener service is written in Python using Paho MQTT library.
+
+Its job is minimal: receives events from MQTT and stores them in the database, for a later analysis.
