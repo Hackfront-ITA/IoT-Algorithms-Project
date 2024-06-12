@@ -48,7 +48,7 @@ For each event sent via LoRa, additional 75.5 ms are spent, which is roughly the
 
 With a sampling window duration of 20 seconds, the maximum number of packets sent is:
 
-$$n_{pkt} = \frac{20000 ms - 48 ms}{75.5 ms} = 264 packets $$
+$$n_{pkt} = \frac{20000 ms - 48 ms}{75.5 ms} = 264 $$
 
 which is a lot more than we need, so there is no timing issue between tasks.
 
@@ -56,7 +56,14 @@ which is a lot more than we need, so there is no timing issue between tasks.
 
 As our node network is distributed, a method to sync events that happen concurrently is needed.
 
-It can happen that
+It can happen that a node has just finished doing FFT + z-score calculation but another node just started sampling.
+
+How do we aggregate values belonging to unaligned windows?
+
+When each node transmits an event packet, it attaches an *epoch* value.
+This value is managed by the controller, which increments it and broadcasts via LoRa to all the nodes the new epoch each 40 seconds, which is double of the sampling window.
+
+This ensures that the values are aggregated inside a window of 40 seconds, which is a bit less than the minute of end-to-end latency requirement stated before.
 
 ### LoRa parameters
 We used a tool ([LoRaTools air time calculator](https://www.loratools.nl/#/airtime)) to estimate time on air and [this guide](https://medium.com/home-wireless/testing-lora-radios-with-the-limesdr-mini-part-2-37fa481217ff).
