@@ -12,22 +12,22 @@
 
 ### Energy harvesting
 
-Based on the previous section, the average power consumption is xxx.xx mW.
+Based on the previous section, the average power consumption is 326 mW.
 
 In order to ensure the system can operate on battery power for an entire day, we need to calculate the battery capacity:
 
-$$ E_{bat} = P_{avg} \cdot t_{day} = xxx.xx mW \cdot 24 h = xxxx.xx mWh = x.xxx Wh $$
+$$ E_{bat} = P_{avg} \cdot t_{day} = 326.0 mW \cdot 24 h = 7824.0 mWh = 7.824 Wh $$
 
-A battery recovered from a tablet, with a capacity of $11.1 Wh$ should be sufficient to meet the energy needs for a bit more than a day.
+A battery recovered from a tablet, with a capacity of $11.1 Wh$ should be sufficient to meet the energy needs for more than a day (1 day, 10 hours).
 
 Regarding the solar panel, it should provide for a day enough energy to power the node AND recharge the battery.
 The battery may be almost empty and it needs to be recharged during the period of light to be ready for the next day.
 
 So the calculation of the solar panel power, assuming 6 hours of light a day ($t_{light} = 6 h$) is:
 
-$$ P_{solar} = \frac{E_{bat}}{t_{light}} + P_{avg} = \frac{x.xxx Wh}{6 h} + x.xxx Wh = xx.xx W $$
+$$ P_{solar} = \frac{E_{bat}}{t_{light}} + P_{avg} = \frac{7.824 Wh}{6 h} + 0.326 Wh = 1.63 W $$
 
-A solar panel like [this one](https://www.amazon.it/s?k=pannello+solare+5v) on Amazon should be sufficient.
+A solar panel like [this one](https://www.amazon.it/dp/B09JFYPDNC) on Amazon, rated for 6W @ 5V is more than enough.
 
 ### Task timing
 
@@ -48,7 +48,7 @@ For each event sent via LoRa, additional 75.5 ms are spent, which is roughly the
 
 With a sampling window duration of 10 seconds, the maximum number of packets sent is:
 
-$$n_{pkt} = \frac{10000 ms - 48 ms}{75.5 ms} = 132 $$
+$$n_{pkt} = \frac{10000 ms - 48 ms}{75.5 ms} = 131 $$
 
 which is a lot more than we need, so there is no timing issue between tasks.
 

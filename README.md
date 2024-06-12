@@ -22,6 +22,5 @@ database for long-term storage and analysis.
 - [Evaluation](./docs/evaluation.md)
 
 ### Presentations
-- [Final delivery](./docs/presentations/final-delivery.pdf)
 - [Second delivery](./docs/presentations/second-delivery.pdf)
 - [First delivery](./docs/presentations/first-delivery.pdf)
