@@ -10,6 +10,18 @@
 
 ### Power consumption
 
+#### Circuit
+
+For the power consumption evaluation the following circuit is used.
+
+![Circuit](../res/measurement_circuit.png "Power measurement circuit")
+
+The code used by the Arduino is at [src/measurement/src/measurement.ino](../src/measurement/src/measurement.ino)
+
+#### Graph
+
+![Power graph](../res/measurements/consumption-complete.png "Power graph")
+
 
 ### Energy harvesting
 
