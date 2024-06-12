@@ -4,6 +4,7 @@
 - [Power consumption](#energy-consumption)
 - [Energy harvesting](#energy-harvesting)
 - [LoRa parameters](#lora-parameters)
+- [Task timing](#task-timing)
 - [Time sync](#time-sync)
 
 ### Power consumption
@@ -27,6 +28,29 @@ So the calculation of the solar panel power, assuming 6 hours of light a day ($t
 $$ P_{solar} = \frac{E_{bat}}{t_{light}} + P_{avg} = \frac{x.xxx Wh}{6 h} + x.xxx Wh = xx.xx W $$
 
 A solar panel like [this one](https://www.amazon.it/s?k=pannello+solare+5v) on Amazon should be sufficient.
+
+### Task timing
+
+The time-critical parts of the node firmware are the data_collect and data_process tasks.
+
+The data_collect task fills a array containing 20 seconds worth of samples. Once finished, it wakes up the data_process task, which takes the filled array, processes the data and sends the results via LoRa.
+
+The data_collect task does not wait the completion of data_process task, otherwise the samples could be lost, so it starts a new sampling window in another *slot* of the data array.
+
+As there are two slots, the data_process task has to release the old slot before the data_collect starts collecting again there.
+
+It is critical that an iteration of the data_process task takes less than an iteration of the data_collect task.
+
+A measurement is done to avoid this scenario. With `esp_timer_get_time()` function, we measured the time taken by an iteration of data_process task.
+
+The calculation part of the task has a fixed duration, on average 48 ms.
+For each event sent via LoRa, additional 75.5 ms are spent, which is roughly the airtime of the packet.
+
+With a sampling window duration of 20 seconds, the maximum number of packets sent is:
+
+$$n_{pkt} = \frac{20000 ms - 48 ms}{75.5 ms} = 264 packets $$
+
+which is a lot more than we need, so there is no timing issue between tasks.
 
 ### Time sync
 
